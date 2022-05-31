@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/1f921a9c-5e0f-455f-82ec-176733ac31ee/microsoft.web/sites/subscriptions/1f921a9c-5e0f-455f-82ec-176733ac31ee/resourceGroups/ChessTrainerVO_group/providers/Microsoft.Web/sites/ChessTrainerVO",
+    "appService.deploySubpath": "."
+}
