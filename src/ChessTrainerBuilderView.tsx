@@ -11,9 +11,9 @@ type TrainerBuilderViewProps = {
 }
 
 export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
-    const [debug, setDebug] = useState(null);
+    // const [debug, setDebug] = useState(null);
     const [fen, setFen] = useState(() => trainer.fen);
-    const [currentMove, setCurrentMove] = useState(null)
+    // const [currentMove, setCurrentMove] = useState(null)
     const [repository, setRepository] = useState(null);
 
     function onSaveBuild() {
@@ -23,7 +23,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
 
     function onTrainerChanged() {
         setFen(s => trainer.fen);
-        setCurrentMove(s => trainer.currentBranch)
+        // setCurrentMove(s => trainer.currentBranch)
         setRepository(s => trainer.repository)
     }
 
@@ -63,7 +63,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
                         boardWidth={350}
                     />
 
-                    <p>🧠: {JSON.stringify(debug)}~</p>
+                    {/* <p>🧠: {JSON.stringify(debug)}~</p> */}
                 </Col>
                 <Col>
                     <button onClick={onCreateRequested}>create</button>

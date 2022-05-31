@@ -12,21 +12,11 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
     const [debug, setDebug] = useState(null);
     const [fen, setFen] = useState(() => trainer.fen());
     const [arrows, setArrows] = useState([]);
-    const [currentMove, setCurrentMove] = useState(null)
-    const [repository, setRepository] = useState(null);
-    const [done, setDone] = useState(() => trainer.isDone());
-
-    function onReloadRepository() {
-        onTrainerChanged();
-    }
-
+    
     function onTrainerChanged() {
         setDebug(s => trainer.isDone() ? 'done 🖕' : '...');
         setFen(s => trainer.fen());
         setArrows(s => trainer.arrows);
-        setCurrentMove(s => trainer.currentBranch)
-        setRepository(s => trainer.repository)
-        setDone(s => trainer.isDone())
     }
 
     function onDrop(from, to) {
@@ -53,11 +43,7 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
         trainer.isComputerMove() && trainer.doComputerMove();
         onTrainerChanged();
     }
-
-    function onTest() {
-
-    }
-
+    
     function doComputerMove() {
         trainer.doComputerMove();
         onTrainerChanged();

@@ -21,22 +21,23 @@ async function getMoveRepositoryAsync() {
 }
 
 function App() {
-  let [loaded, setLoaded] = useState(false)
   let [building, setBuilding] = useState(false)
   let [repository, setRepository] = useState(null)
   let [trainerBuilder, setTrainerBuilder] = useState(null)
   let [trainer, setTrainer] = useState(null)
 
   async function loadRemoteJson() {
-    console.log('making')
     let orientation: Orientation = 'black'
     let json = await getMoveRepositoryAsync();
     let repository = new Repository();
-    repository.mergeFromJson(json);
+    console.log(repository.root)
+    repository.merge(json);
+    console.log(repository.root)
+    repository.mergeFromLocal();
+    console.log(repository.root)
     setRepository(repository);
     setTrainerBuilder(new ChessTrainerBuilder(repository, orientation))
     setTrainer(new ChessTrainer(repository, orientation))
-    setLoaded(true);
     console.log('made')
   }
 
@@ -48,7 +49,7 @@ function App() {
     console.log(trainerBuilder.getRepositoryJson())
   }
 
-  if(!loaded) {
+  if(!repository) {
     return <p>loading...</p>
   }
 
@@ -66,8 +67,10 @@ function App() {
       />
       <link rel="stylesheet" type="text/css" href="react-treeview.css"></link>
       <header className="App-header">
-        <button onClick={() => setBuilding(b => !b)}>{building ? 'building' : 'playing'}</button>
-        <button onClick={onOutputRepo}>output repo</button>
+        <div>
+          <button onClick={() => setBuilding(b => !b)}>{building ? 'building' : 'playing'}</button>
+          <button onClick={onOutputRepo}>output repo</button>
+        </div>
         {coreView}
       </header>
     </div>

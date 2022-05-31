@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { MoveRepository, Branch, MoveBranch } from './ChessTrainerShared'
+import { Branch, MoveBranch } from './ChessTrainerShared'
 import { Repository } from "./Repository";
 import TreeView from "./TreeView";
 
@@ -22,7 +22,7 @@ function BranchView({ branch, level, onSelected, selected }) {
             {/* <input type='checkbox'>{branch.name} {branch.move.from} {branch.move.to}</input> */}
             <TreeView 
                 nodeLabel={(
-                    level + ' ' + branch.move.from + '->' + branch.move.to + ' ' + (branch == selected ? '*' : ' ')
+                    level + ' ' + branch.move.from + '->' + branch.move.to + ' ' + (branch === selected ? '*' : ' ')
                 )}
                 collapsed={collapsed}
                 onClick={onClick}>
@@ -56,18 +56,14 @@ type RepositoryViewProps = {
 
 export function RepositoryView({ repository, onSelected }: RepositoryViewProps) {
     let [selected, setSelected] = useState(null)
-    let [level, setLevel] = useState(0);
+    // let [level, setLevel] = useState(0);
 
     if(!repository)
         return <p>null repo</p>
 
-    function onClick(x: any) {
-        console.log('click', x)
-    }
-
     function onChildSelected({branch, level}) {
         setSelected(branch);
-        setLevel(level)
+        // setLevel(level)
         onSelected && onSelected(branch);
     }
 
@@ -76,14 +72,11 @@ export function RepositoryView({ repository, onSelected }: RepositoryViewProps) 
     let root = selected == null || parentLevel == null
         ? repository.root.branches
         : parentLevel.branches;
-
     
-
     return (
-        
         <div style={{border: 'solid', textAlign: 'left'}}>
             <div>repository view</div>
-            <p>root is repository: {root == repository.root.branches ? 'true' : 'false'}</p>
+            <p>root is repository: {root === repository.root.branches ? 'true' : 'false'}</p>
             <p>findParentLevel: {parentLevel != null && 'move' in parentLevel ? parentLevel.move.from : 'null'}</p>
             {root.map((b, i) => {
                 return (
@@ -95,37 +88,6 @@ export function RepositoryView({ repository, onSelected }: RepositoryViewProps) 
                             // </div>
                     // </TreeView>
                 );
-            })}
-        </div>
-    );
-}
-
-
-function BranchView1({ branch }) {
-    return (
-        <div>
-            <input type='checkbox'>{branch.name} {branch.move.from} {branch.move.to}</input>
-            {branch.branches.map((b, i) => {
-                return <BranchView1 key={i} branch={b} />
-            })}
-        </div>
-    );
-}
-
-export function RepositoryView1({ repository }) {
-    let [current, setCurrent] = useState(null)
-    if(!repository)
-        return <p>null repo</p>
-    console.log(repository)
-    return (
-        
-        <div>
-            <TreeView>
-                {/* <TreeItem nodeId='1' label='test'/> */}
-            </TreeView>
-            <div>repository view</div>
-            {repository.branches.map((b, i) => {
-                return <BranchView1 key={i} branch={b}/>
             })}
         </div>
     );

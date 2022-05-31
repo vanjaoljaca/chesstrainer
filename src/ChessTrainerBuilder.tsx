@@ -1,7 +1,7 @@
 import './App.css';
 // https://github.com/jhlywa/chess.js/blob/master/README.md
-import { Chess, ChessInstance, ShortMove, Square } from "chess.js";
-import { Branch, Orientation, RootBranch, Fen, moveEquals, branch, MoveBranch } from './ChessTrainerShared';
+import { Chess, ChessInstance, Square } from "chess.js";
+import { Branch, Orientation, RootBranch, moveEquals, branch, MoveBranch } from './ChessTrainerShared';
 import { Repository } from './Repository';
 
 export class ChessTrainerBuilder {
@@ -59,7 +59,7 @@ export class ChessTrainerBuilder {
     }
 
     saveBuild() {
-        this.repository.saveBranches(this.buildLine);
+        this.repository.addBranches(this.buildLine);
     }
 
     get fen() {
@@ -69,6 +69,6 @@ export class ChessTrainerBuilder {
     get isEnd() {
         return this.currentBranch == null
             || this.currentBranch.branches == null
-            || this.currentBranch.branches.length == 0;
+            || this.currentBranch.branches.length === 0;
     }
 }

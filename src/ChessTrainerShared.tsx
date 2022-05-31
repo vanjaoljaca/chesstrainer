@@ -5,7 +5,7 @@ export function move(from: Square, to: Square): ShortMove {
 }
 
 export function moveEquals(a: ShortMove, b: ShortMove): boolean {
-    return a.from == b.from && a.to == b.to;
+    return a.from === b.from && a.to === b.to;
 }
 
 export type Branch = MoveBranch | RootBranch

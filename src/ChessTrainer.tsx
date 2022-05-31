@@ -42,7 +42,7 @@ export class ChessTrainer {
 
     tryMove(from: Square, to: Square) {
         if (!this.isHumanMove())
-            throw 'Not human move.'
+            throw Error('Not human move.')
 
         var candidate;
 
@@ -64,7 +64,7 @@ export class ChessTrainer {
 
     doComputerMove() {
         if (!this.isComputerMove()) {
-            throw 'Not computer move.'
+            throw Error('Not computer move.')
         }
 
         // let branches = this.branchesFromFen[this.game.fen()]
@@ -73,7 +73,7 @@ export class ChessTrainer {
         }
 
         let branches = this.currentBranch.branches;
-        if (!branches || branches.length == 0) {
+        if (!branches || branches.length === 0) {
             this.end = true;
             console.log('end of line')
             return;
@@ -111,7 +111,7 @@ export class ChessTrainer {
         let line = [];
         var currentBranches = repository.branches;
         var current = null;
-        while (currentBranches != null && currentBranches.length != 0) {
+        while (currentBranches != null && currentBranches.length !== 0) {
             let i = Math.floor(Math.random() * currentBranches.length);
             current = currentBranches[i];
             currentBranches = current.branches;
@@ -129,10 +129,10 @@ export class ChessTrainer {
     }
 
     isHumanMove() {
-        return this.game.turn() == this.orientation[0]
+        return this.game.turn() === this.orientation[0]
     }
 
     isDone() {
-        return this.currentBranch.branches.length == 0;
+        return this.currentBranch.branches.length === 0;
     }
 }
