@@ -78,4 +78,5 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
                 </Col>
             </Row>
         </Container>);
+        
 }
