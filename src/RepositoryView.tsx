@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { MoveRepository, Branch, MoveBranch } from './ChessTrainerShared'
+import { Repository } from "./Repository";
 import TreeView from "./TreeView";
 
 function BranchView({ branch, level, onSelected, selected }) {
@@ -48,7 +49,12 @@ function findParentLevel(branch: MoveBranch, level: number) {
     return current;
 }
 
-export function RepositoryView({ repository, onSelected }) {
+type RepositoryViewProps = {
+    repository: Repository, 
+    onSelected: (branch: Branch) => void
+}
+
+export function RepositoryView({ repository, onSelected }: RepositoryViewProps) {
     let [selected, setSelected] = useState(null)
     let [level, setLevel] = useState(0);
 
@@ -68,7 +74,7 @@ export function RepositoryView({ repository, onSelected }) {
     let parentLevel = findParentLevel(selected, 3);
 
     let root = selected == null || parentLevel == null
-        ? repository.branches
+        ? repository.root.branches
         : parentLevel.branches;
 
     
@@ -77,7 +83,7 @@ export function RepositoryView({ repository, onSelected }) {
         
         <div style={{border: 'solid', textAlign: 'left'}}>
             <div>repository view</div>
-            <p>root is repository: {root == repository.branches ? 'true' : 'false'}</p>
+            <p>root is repository: {root == repository.root.branches ? 'true' : 'false'}</p>
             <p>findParentLevel: {parentLevel != null && 'move' in parentLevel ? parentLevel.move.from : 'null'}</p>
             {root.map((b, i) => {
                 return (

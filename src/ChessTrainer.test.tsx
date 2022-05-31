@@ -10,5 +10,5 @@ import { ChessTrainer } from './ChessTrainer';
 // });
 
 test('test', () => {
-  let trainer = new ChessTrainer();
+  // let trainer = new ChessTrainer();
 })

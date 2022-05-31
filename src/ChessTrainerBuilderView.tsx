@@ -4,6 +4,7 @@ import { Chessboard } from "react-chessboard";
 import { ChessTrainerBuilder } from './ChessTrainerBuilder'
 import { Container, Row, Col } from 'react-bootstrap';
 import { RepositoryView } from "./RepositoryView";
+import { Branch } from "./ChessTrainerShared";
 
 type TrainerBuilderViewProps = {
     trainer: ChessTrainerBuilder
@@ -11,22 +12,17 @@ type TrainerBuilderViewProps = {
 
 export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     const [debug, setDebug] = useState(null);
-    const [fen, setFen] = useState(() => trainer.fen());
+    const [fen, setFen] = useState(() => trainer.fen);
     const [currentMove, setCurrentMove] = useState(null)
     const [repository, setRepository] = useState(null);
 
     function onSaveBuild() {
         trainer.saveBuild();
-        trainer.persistRepository();
         onTrainerChanged();
     }
 
-    function onSave() {
-        trainer.persistRepository();
-    }
-
     function onTrainerChanged() {
-        setFen(s => trainer.fen());
+        setFen(s => trainer.fen);
         setCurrentMove(s => trainer.currentBranch)
         setRepository(s => trainer.repository)
     }
@@ -44,7 +40,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
 
     }
 
-    function onSelected(b) {
+    function onSelected(b: Branch) {
         trainer.loadBranch(b);
         onTrainerChanged();
     }
@@ -60,8 +56,6 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
                     <button onClick={() => trainer.reset()}>reset</button>
                     <button onClick={onTest}>test</button>
                     <button onClick={onSaveBuild}>save build</button>
-                    <button onClick={onSave}>save repo</button>
-                    <button onClick={() => trainer.clearRepository()}>clear repo</button>
                     <button onClick={() => onTrainerChanged()}>refresh</button>
                     <Chessboard
                         boardOrientation={trainer.orientation}

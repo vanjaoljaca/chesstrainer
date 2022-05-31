@@ -1,14 +1,13 @@
 import './App.css';
 // https://github.com/jhlywa/chess.js/blob/master/README.md
 import { Chess, ChessInstance, ShortMove, Square } from "chess.js";
-import { Branch, Line, MoveBranch, MoveRepository, Orientation, RootBranch, Fen, moveEquals } from './ChessTrainerShared';
+import { Branch, Line, Orientation, RootBranch, Fen, moveEquals } from './ChessTrainerShared';
+import { Repository } from './Repository';
 
 export class ChessTrainer {
-    mergeFromJson(json: any) {
-      throw new Error("Method not implemented.");
-    }
+    
     readonly game: ChessInstance;
-    repository: RootBranch;
+    repository: Repository;
     line: (Branch | RootBranch)[] = [];
     currentLine: Branch[] = []
     currentBranch: Branch | RootBranch = null
@@ -18,70 +17,12 @@ export class ChessTrainer {
     buildLine: ShortMove[] = []
     branchesFromFen: Map<Fen, Branch[]>
 
-    constructor(moveRepository?: MoveRepository, orientation?: Orientation) {
+    constructor(repository: Repository, orientation?: Orientation) {
+        console.log('game created')
         this.game = new Chess();
+        this.repository = repository;
         this.orientation = orientation;
-        if (moveRepository) {
-            this.repository = {
-                name: 'Root',
-                branches: moveRepository
-            }
-        } else {
-            this.repository = this.loadRepository()
-        }
-        this.currentBranch = this.repository
-        if (this.isComputerMove()) {
-            this.doComputerMove();
-        }
-    }
-
-    static readonly REPOSITORY_KEY = 'REPOSITORY2';
-    persistRepository() {
-        this.deparentify(this.repository.branches);
-        localStorage.setItem(ChessTrainer.REPOSITORY_KEY, JSON.stringify(this.repository));
-        this.parentify(null, this.repository.branches)
-    }
-
-    loadRepository() {
-        let json = localStorage.getItem(ChessTrainer.REPOSITORY_KEY);
-        let parsed = JSON.parse(json);
-        let repository: RootBranch = parsed ? parsed : { branches: [], name: 'root' }
-        this.parentify(undefined, repository.branches)
-        this.loadFen(repository.branches)
-        console.log('Loaded repository:', this.repository)
-        return repository
-    }
-
-    deparentify(branches: MoveBranch[]) {
-        for (let branch of branches) {
-            branch.parent = undefined;
-            this.deparentify(branch.branches);
-        }
-    }
-
-    parentify(parent: any, branches: MoveBranch[]) {
-        for (let branch of branches) {
-            branch.parent = parent;
-            this.parentify(branch, branch.branches);
-        }
-    }
-
-    loadFen(repository: MoveRepository) {
-        let result = new Map<Fen, Branch[]>();
-        let game = new Chess()
-        let dfs = (branches) => {
-            let fen = game.fen();
-            let fenBranches = result.get(fen) || []
-            result[fen] = fenBranches;
-            for (let branch of branches) {
-                fenBranches.push(branch);
-                game.move(branch.move);
-                dfs(branch.branches);
-                game.undo();
-            }
-        }
-        dfs(repository);
-        this.branchesFromFen = result;
+        this.currentBranch = this.repository.root
     }
 
     loadBranch(branch) {
@@ -129,7 +70,6 @@ export class ChessTrainer {
         // let branches = this.branchesFromFen[this.game.fen()]
         if(!this.currentBranch) {
             return;
-            this.currentBranch = this.repository.branches[0];
         }
 
         let branches = this.currentBranch.branches;
@@ -150,17 +90,17 @@ export class ChessTrainer {
     reset() {
         this.buildLine = []
         this.game.reset();
-        this.currentBranch = this.repository
+        this.currentBranch = this.repository.root
         this.currentLine = []
     }
 
     playRandomLine() {
-        this.playLine(this.getRandomLine(this.repository));
+        this.playLine(this.getRandomLine(this.repository.root));
     }
 
     playLine(line: Line) {
         this.line = line;
-        this.currentBranch = this.repository
+        this.currentBranch = this.repository.root
         this.game.reset();
         if (this.isComputerMove()) {
             this.doComputerMove();

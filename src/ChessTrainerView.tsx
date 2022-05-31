@@ -17,7 +17,6 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
     const [done, setDone] = useState(() => trainer.isDone());
 
     function onReloadRepository() {
-        trainer.loadRepository();
         onTrainerChanged();
     }
 
@@ -31,6 +30,7 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
     }
 
     function onDrop(from, to) {
+        console.log('on trop', trainer.isHumanMove());
         let result = trainer.tryMove(from, to);
         onTrainerChanged();
         if (!result) {
@@ -67,25 +67,18 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
         <Container>
             <Row>
                 <Col>
-                    <button onClick={() => trainer.reset()}>reset</button>
-                    <button onClick={onTest}>test</button>
-                    <button onClick={doComputerMove}>computer</button>
-                    <button onClick={onPlayRandom}>play random</button>
-                    <button onClick={() => onTrainerChanged()}>refresh</button>
-                    <button onClick={() => onReloadRepository()}>reload repo</button>
+                    <button onClick={doComputerMove}>start</button>
                     <Chessboard
                         boardOrientation={trainer.orientation}
                         position={fen} onPieceDrop={onDrop}
                         customArrows={arrows}
                         boardWidth={350}
                     />
-
                     <p>🧠: {JSON.stringify(debug)}~</p>
                 </Col>
                 <Col>
                     
-                </Col>
-                
+                </Col>     
             </Row>
         </Container>);
 }
