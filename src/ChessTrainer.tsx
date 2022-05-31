@@ -4,6 +4,9 @@ import { Chess, ChessInstance, ShortMove, Square } from "chess.js";
 import { Branch, Line, MoveBranch, MoveRepository, Orientation, RootBranch, Fen, moveEquals } from './ChessTrainerShared';
 
 export class ChessTrainer {
+    mergeFromJson(json: any) {
+      throw new Error("Method not implemented.");
+    }
     readonly game: ChessInstance;
     repository: RootBranch;
     line: (Branch | RootBranch)[] = [];
@@ -32,7 +35,7 @@ export class ChessTrainer {
         }
     }
 
-    static readonly REPOSITORY_KEY = 'REPOSITORY';
+    static readonly REPOSITORY_KEY = 'REPOSITORY2';
     persistRepository() {
         this.deparentify(this.repository.branches);
         localStorage.setItem(ChessTrainer.REPOSITORY_KEY, JSON.stringify(this.repository));

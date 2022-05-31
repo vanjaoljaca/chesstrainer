@@ -1,0 +1,84 @@
+{
+    "name": "root",
+    "branches": [
+        {
+            "move": {
+                "from": "e2",
+                "to": "e4"
+            },
+            "branches": [
+                {
+                    "move": {
+                        "from": "c7",
+                        "to": "c6"
+                    },
+                    "branches": [
+                        {
+                            "move": {
+                                "from": "d2",
+                                "to": "d4"
+                            },
+                            "branches": [
+                                {
+                                    "move": {
+                                        "from": "d7",
+                                        "to": "d5"
+                                    },
+                                    "branches": [
+                                        {
+                                            "move": {
+                                                "from": "e4",
+                                                "to": "e5"
+                                            },
+                                            "branches": [
+                                                {
+                                                    "move": {
+                                                        "from": "c6",
+                                                        "to": "c5"
+                                                    },
+                                                    "branches": [
+                                                        {
+                                                            "move": {
+                                                                "from": "d4",
+                                                                "to": "c5"
+                                                            },
+                                                            "branches": [
+                                                                {
+                                                                    "move": {
+                                                                        "from": "b8",
+                                                                        "to": "c6"
+                                                                    },
+                                                                    "branches": [],
+                                                                    "played": 0,
+                                                                    "correct": 0
+                                                                }
+                                                            ],
+                                                            "played": 0,
+                                                            "correct": 0
+                                                        }
+                                                    ],
+                                                    "played": 0,
+                                                    "correct": 0
+                                                }
+                                            ],
+                                            "played": 0,
+                                            "correct": 0
+                                        }
+                                    ],
+                                    "played": 0,
+                                    "correct": 0
+                                }
+                            ],
+                            "played": 0,
+                            "correct": 0
+                        }
+                    ],
+                    "played": 0,
+                    "correct": 0
+                }
+            ],
+            "played": 0,
+            "correct": 0
+        }
+    ]
+}

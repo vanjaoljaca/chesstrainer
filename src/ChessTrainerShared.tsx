@@ -20,6 +20,8 @@ export type MoveBranch = {
     comment?: string
 }
 
+export type FenBranch = {} /* todo */
+
 export type RootBranch = Omit<MoveBranch, 'move' | 'played' | 'correct' | 'parent'>
 
 export type Line = Branch[]

@@ -28,11 +28,17 @@ export class ChessTrainerBuilder {
         this.currentBranch = this.repository
     }
 
-    static readonly REPOSITORY_KEY = 'REPOSITORY';
+    static readonly REPOSITORY_KEY = 'REPOSITORY2';
     persistRepository() {
+        let json = this.getRepositoryJson();
+        localStorage.setItem(ChessTrainerBuilder.REPOSITORY_KEY, json);
+    }
+
+    getRepositoryJson() {
         this.deparentify(this.repository.branches);
-        localStorage.setItem(ChessTrainerBuilder.REPOSITORY_KEY, JSON.stringify(this.repository));
+        let json = JSON.stringify(this.repository);
         this.parentify(null, this.repository.branches)
+        return json;
     }
 
     loadRepository() {
@@ -43,6 +49,14 @@ export class ChessTrainerBuilder {
         this.loadFen(repository.branches)
         console.log('Loaded repository:', this.repository)
         return repository
+    }
+
+    mergeFromJson(repository: RootBranch) {
+        console.log('merge from json')
+        this.parentify(undefined, repository.branches)
+        this.loadFen(repository.branches);
+        this.currentBranch = repository;
+        this.repository = repository;
     }
 
     deparentify(branches: MoveBranch[]) {

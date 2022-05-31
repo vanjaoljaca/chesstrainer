@@ -66,6 +66,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
                     <Chessboard
                         boardOrientation={trainer.orientation}
                         position={fen} onPieceDrop={onDrop}
+                        boardWidth={350}
                     />
 
                     <p>🧠: {JSON.stringify(debug)}~</p>
@@ -78,5 +79,5 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
                 </Col>
             </Row>
         </Container>);
-        
+
 }

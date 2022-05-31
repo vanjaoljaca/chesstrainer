@@ -77,6 +77,7 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
                         boardOrientation={trainer.orientation}
                         position={fen} onPieceDrop={onDrop}
                         customArrows={arrows}
+                        boardWidth={350}
                     />
 
                     <p>🧠: {JSON.stringify(debug)}~</p>
