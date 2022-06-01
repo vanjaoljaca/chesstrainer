@@ -58,7 +58,27 @@ export class Repository {
         }
     }
 
-    merge(repository: RootBranch) {
+    dedupe() {
+        console.log(this.root)
+        let dedupe = (branch) => {
+            let deduped = [];
+            for(let child of branch.branches) {
+                let inDeduped = deduped.find(b => moveEquals(child.move, b.move));
+                if(inDeduped) {
+                    Repository.copyInto(child, inDeduped);
+                } else {
+                    dedupe(child);
+                    deduped.push(child);
+                }
+            }
+            branch.branches = deduped;
+        }
+
+        dedupe(this.root);
+        console.log(this.root)
+    }
+
+    merge(repository: RootBranch) { // classical 8 e7 f6
         Repository.copyInto(repository, this.root);
         Repository.parentify(undefined, repository.branches)
         this.generateFen();
@@ -129,7 +149,7 @@ export class Repository {
         return game.fen();
     }
 
-    static copyInto(source: Branch, target: Branch) {
+    static copyInto(source: Branch, target: Branch) { // 4x 0, 1x 3 4x 0 (2 baddies)
         // assert source.move == target.move
         if(!target.branches)
             target.branches = []

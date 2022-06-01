@@ -31,7 +31,9 @@ function App() {
     let json = await getMoveRepositoryAsync();
     let repository = new Repository();
     repository.merge(json);
+    // would be nice if this wasn't needed, but you know, crap happens!
     repository.mergeFromLocal();
+    repository.dedupe();
     setRepository(repository);
     setTrainerBuilder(new ChessTrainerBuilder(repository, orientation))
     setTrainer(new ChessTrainer(repository, orientation))
@@ -42,6 +44,7 @@ function App() {
   }, [])
 
   function onOutputRepo() {
+    repository.dedupe();
     console.log(repository.json())
   }
 
