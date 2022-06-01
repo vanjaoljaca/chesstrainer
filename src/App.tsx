@@ -22,23 +22,19 @@ async function getMoveRepositoryAsync() {
 
 function App() {
   let [building, setBuilding] = useState(false)
-  let [repository, setRepository] = useState(null)
-  let [trainerBuilder, setTrainerBuilder] = useState(null)
-  let [trainer, setTrainer] = useState(null)
+  let [repository, setRepository] = useState<Repository>(null)
+  let [trainerBuilder, setTrainerBuilder] = useState<ChessTrainerBuilder>(null)
+  let [trainer, setTrainer] = useState<ChessTrainer>(null)
 
   async function loadRemoteJson() {
     let orientation: Orientation = 'black'
     let json = await getMoveRepositoryAsync();
     let repository = new Repository();
-    console.log(repository.root)
     repository.merge(json);
-    console.log(repository.root)
     repository.mergeFromLocal();
-    console.log(repository.root)
     setRepository(repository);
     setTrainerBuilder(new ChessTrainerBuilder(repository, orientation))
     setTrainer(new ChessTrainer(repository, orientation))
-    console.log('made')
   }
 
   useEffect(() => {
@@ -46,7 +42,7 @@ function App() {
   }, [])
 
   function onOutputRepo() {
-    console.log(trainerBuilder.getRepositoryJson())
+    console.log(repository.json())
   }
 
   if(!repository) {
@@ -65,7 +61,7 @@ function App() {
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
         crossOrigin="anonymous"
       />
-      <link rel="stylesheet" type="text/css" href="react-treeview.css"></link>
+      {/* <link rel="stylesheet" type="text/css" href="react-treeview.css"></link> */}
       <header className="App-header">
         <div>
           <button onClick={() => setBuilding(b => !b)}>{building ? 'building' : 'playing'}</button>

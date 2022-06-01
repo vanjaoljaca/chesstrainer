@@ -20,6 +20,14 @@ export class Repository {
         this.generateFenPartial(branches);
     }
 
+    removeBranches(branches: MoveBranch[]) {
+        for(let branch of branches) {
+            branch.parent.branches.splice(branch.parent.branches.indexOf(branch), 1);
+            let fen = Repository.getFen(branch.parent)
+            this.branchesFromFen[fen].splice(this.branchesFromFen[fen].indexOf(branch), 1)
+        }
+    }
+
     generateFen() {
         let result = new Map<Fen, Branch[]>();
         let game = new Chess()
@@ -115,7 +123,7 @@ export class Repository {
             current = 'parent' in current ? current.parent : null;
         }
         let game = new Chess();
-        for (var i = line.length; i >= 0; i--) {
+        for (var i = line.length - 1; i >= 0; i--) {
             game.move(line[i].move);
         }
         return game.fen();

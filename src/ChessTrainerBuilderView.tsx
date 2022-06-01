@@ -6,6 +6,16 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { RepositoryView } from "./RepositoryView";
 import { Branch } from "./ChessTrainerShared";
 
+/*
+- scroll bar on right side
+- left side always centered
+- back 1 move button
+- repository dedupe
+- edit move comment / name / arrows / targets / notes
+- Delect move
+- separate moves from stats
+*/
+
 type TrainerBuilderViewProps = {
     trainer: ChessTrainerBuilder
 }
@@ -14,7 +24,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     // const [debug, setDebug] = useState(null);
     const [fen, setFen] = useState(() => trainer.fen);
     // const [currentMove, setCurrentMove] = useState(null)
-    const [repository, setRepository] = useState(null);
+    const [repository, setRepository] = useState(() => trainer.repository);
 
     function onSaveBuild() {
         trainer.saveBuild();
@@ -36,8 +46,17 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
         return true;
     }
 
-    function onTest() {
+    function onBack() {
+        if('parent' in trainer.currentBranch)
+            trainer.currentBranch = trainer.currentBranch.parent;
+            onTrainerChanged()
+    }
 
+    function onDelete() {
+        if('parent' in trainer.currentBranch) {
+            trainer.delete(trainer.currentBranch);
+        }
+        onTrainerChanged()
     }
 
     function onSelected(b: Branch) {
@@ -45,16 +64,13 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
         onTrainerChanged();
     }
 
-    function onCreateRequested() {
-
-    }
-
     return (
         <Container>
             <Row>
                 <Col>
                     <button onClick={() => trainer.reset()}>reset</button>
-                    <button onClick={onTest}>test</button>
+                    <button onClick={onBack}>back</button>
+                    <button onClick={onDelete}>delete</button>
                     <button onClick={onSaveBuild}>save build</button>
                     <button onClick={() => onTrainerChanged()}>refresh</button>
                     <Chessboard
@@ -66,7 +82,6 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
                     {/* <p>🧠: {JSON.stringify(debug)}~</p> */}
                 </Col>
                 <Col>
-                    <button onClick={onCreateRequested}>create</button>
                     <RepositoryView 
                         repository={repository}
                         onSelected={onSelected}/>

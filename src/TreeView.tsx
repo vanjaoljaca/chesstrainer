@@ -35,10 +35,15 @@ class TreeView extends React.PureComponent<any, any> {
       collapsed: props.defaultCollapsed
     };
     this.handleClick = this.handleClick.bind(this);
+    this.handleCollapse = this.handleCollapse.bind(this);
+  }
+
+  handleCollapse(e) {
+    e.stopPropagation();
+    this.setState({ collapsed: !this.state.collapsed });
   }
 
   handleClick(...args) {
-    this.setState({ collapsed: !this.state.collapsed });
     if (this.props.onClick) {
       this.props.onClick(...args);
     }
@@ -69,7 +74,9 @@ class TreeView extends React.PureComponent<any, any> {
         {...rest}
         className={className + ' ' + arrowClassName}
         onClick={this.handleClick}
-      >{collapsed ? '>' : 'v'} {nodeLabel}</div>
+      >
+        {/* {collapsed} */}
+        <button onClick={this.handleCollapse}>{collapsed ? '+' : '-'}</button> {nodeLabel}</div>
     );
 
     return (

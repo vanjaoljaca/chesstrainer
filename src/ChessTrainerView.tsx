@@ -28,8 +28,12 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
         }
         setTimeout(() => {
             if(trainer.isDone()) {
-                onPlayRandom();
-                onTrainerChanged();
+                setDebug(() => 'nice 🎉');
+                setTimeout(() => {
+                    onPlayRandom();
+                    onTrainerChanged();
+                    setDebug(() => '...');
+                }, 1000);
                 return;
             }
             if(trainer.isComputerMove()) trainer.doComputerMove();
@@ -60,7 +64,7 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
                         customArrows={arrows}
                         boardWidth={350}
                     />
-                    <p>🧠: {JSON.stringify(debug)}~</p>
+                    <p>🧠: {JSON.stringify(debug)}</p>
                 </Col>
                 <Col>
                     

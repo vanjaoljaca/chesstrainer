@@ -5,6 +5,7 @@ import { Branch, Orientation, RootBranch, moveEquals, branch, MoveBranch } from 
 import { Repository } from './Repository';
 
 export class ChessTrainerBuilder {
+    
     readonly game: ChessInstance;
     readonly repository: Repository;
 
@@ -60,6 +61,10 @@ export class ChessTrainerBuilder {
 
     saveBuild() {
         this.repository.addBranches(this.buildLine);
+    }
+
+    delete(branch: MoveBranch) {
+        this.repository.removeBranches([branch]);
     }
 
     get fen() {

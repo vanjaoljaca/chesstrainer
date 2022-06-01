@@ -18,7 +18,6 @@ export class ChessTrainer {
     branchesFromFen: Map<Fen, Branch[]>
 
     constructor(repository: Repository, orientation?: Orientation) {
-        console.log('game created')
         this.game = new Chess();
         this.repository = repository;
         this.orientation = orientation;
@@ -44,10 +43,8 @@ export class ChessTrainer {
         if (!this.isHumanMove())
             throw Error('Not human move.')
 
-        var candidate;
-
         let branches = this.currentBranch.branches;
-        candidate = branches.find(b => moveEquals(b.move, { from, to }));
+        let candidate = branches.find(b => moveEquals(b.move, { from, to }));
         if (candidate == null) {
             this.arrows = branches.map(b => [b.move.from, b.move.to]);
             return null;
