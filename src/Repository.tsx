@@ -75,12 +75,12 @@ export class Repository {
         }
 
         dedupe(this.root);
-        console.log(this.root)
+        Repository.parentify(this.root, this.root.branches)
     }
 
     merge(repository: RootBranch) { // classical 8 e7 f6
         Repository.copyInto(repository, this.root);
-        Repository.parentify(undefined, repository.branches)
+        Repository.parentify(this.root, repository.branches)
         this.generateFen();
     }
 
@@ -102,21 +102,21 @@ export class Repository {
     json() {
         Repository.deparentify(this.root.branches);
         let json = JSON.stringify(this.root);
-        Repository.parentify(null, this.root.branches)
+        Repository.parentify(this.root, this.root.branches)
         return json;
     }
 
     static saveToLocal(root: RootBranch) {
         Repository.deparentify(root.branches);
         localStorage.setItem(Repository.REPOSITORY_KEY, JSON.stringify(root));
-        Repository.parentify(null, root.branches)
+        Repository.parentify(root, root.branches)
     }
 
     static loadFromLocal() : RootBranch {
         let json = localStorage.getItem(Repository.REPOSITORY_KEY);
         let parsed = JSON.parse(json);
         let repository: RootBranch = parsed ? parsed : { branches: [], name: 'root' }
-        Repository.parentify(undefined, repository.branches)
+        Repository.parentify(repository, repository.branches)
         // this.loadFen(repository.branches)
         return repository
     }

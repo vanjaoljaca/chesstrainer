@@ -6,6 +6,7 @@ React app for drilling chess openings.
 
 ## TODO
 
+- auto start
 - arrows & markers that show lines of attack and which squares are being pressured
 - scroll bar on right side
 - left side always centered
