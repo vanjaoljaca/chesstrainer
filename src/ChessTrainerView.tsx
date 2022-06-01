@@ -20,7 +20,6 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
     }
 
     function onDrop(from, to) {
-        console.log('on trop', trainer.isHumanMove());
         let result = trainer.tryMove(from, to);
         onTrainerChanged();
         if (!result) {

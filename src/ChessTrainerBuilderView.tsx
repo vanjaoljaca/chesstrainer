@@ -6,16 +6,6 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { RepositoryView } from "./RepositoryView";
 import { Branch } from "./ChessTrainerShared";
 
-/*
-- scroll bar on right side
-- left side always centered
-- back 1 move button
-- repository dedupe
-- edit move comment / name / arrows / targets / notes
-- Delect move
-- separate moves from stats
-*/
-
 type TrainerBuilderViewProps = {
     trainer: ChessTrainerBuilder
 }
