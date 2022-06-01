@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import './App.css';
 import { Chessboard } from "react-chessboard";
 import { ChessTrainerBuilder } from './ChessTrainerBuilder'
@@ -15,6 +15,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     const [fen, setFen] = useState(() => trainer.fen);
     // const [currentMove, setCurrentMove] = useState(null)
     const [repository, setRepository] = useState(() => trainer.repository);
+    const [currentBranch, setCurrentBranch] = useState(() => trainer.currentBranch);
 
     function onSaveBuild() {
         trainer.saveBuild();
@@ -50,6 +51,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     }
 
     function onSelected(b: Branch) {
+        setCurrentBranch(b);
         trainer.loadBranch(b);
         onTrainerChanged();
     }
@@ -72,6 +74,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
                     {/* <p>🧠: {JSON.stringify(debug)}~</p> */}
                 </Col>
                 <Col>
+                    <BranchView branch={currentBranch} onSave={() => {}}/>
                     <RepositoryView 
                         repository={repository}
                         onSelected={onSelected}/>
@@ -79,4 +82,40 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
             </Row>
         </Container>);
 
+}
+
+function BranchView({ branch, onSave }: { branch: Branch, onSave: () => void }) {
+
+    const [name, setName] = useState(() => branch.name);
+    const [comment, setComment] = useState(() => branch.comment);
+
+    useEffect(() => {
+        setName(branch.name || '');
+        setComment(branch.comment || '');
+    }, [branch]);
+
+
+    function onNameChanged(e) {
+
+    }
+
+    function onCommentChanged(e) {
+
+    }
+
+    function handleSave() {
+        console.log(name, comment);
+        branch.name = name;
+        branch.comment = comment;
+    }
+
+    let move = 'move' in branch ? branch.move.from + ' -> ' + branch.move.to : 'root';
+    return (
+        <div>
+            <p>{move}</p>
+            <input type='text' onChange={e => setName(e.target.value)} value={name} />
+            <input type='text' onChange={e => setComment(e.target.value)} value={comment} />
+            <button onClick={handleSave}>save</button>
+        </div>
+    );
 }

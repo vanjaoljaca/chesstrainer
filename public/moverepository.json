@@ -476,7 +476,9 @@
                                                 }
                                             ],
                                             "played": 0,
-                                            "correct": 0
+                                            "correct": 0,
+                                            "name": "",
+                                            "comment": "fantasy"
                                         }
                                     ],
                                     "played": 0,
@@ -608,11 +610,15 @@
                                         }
                                     ],
                                     "played": 0,
-                                    "correct": 0
+                                    "correct": 0,
+                                    "name": "",
+                                    "comment": "caro-kann 2 knights"
                                 }
                             ],
                             "played": 0,
-                            "correct": 0
+                            "correct": 0,
+                            "name": "",
+                            "comment": ""
                         }
                     ],
                     "played": 0,
