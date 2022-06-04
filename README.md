@@ -7,7 +7,7 @@ React app for drilling chess openings.
 ## TODO
 
 sprint:
-
+- bug: auto-play gets stuck when opposite is last move
 
 recently done:
 - play white

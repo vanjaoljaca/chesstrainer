@@ -15,6 +15,7 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
     const [arrows, setArrows] = useState([]);
     const [orientation, onOrientationChanged] = useProxyState(() => trainer.orientation);
     const [hint, onHintChanged] = useProxyState(() => trainer.hint);
+    const [name, onNameChanged] = useProxyState(() => trainer.currentBranch.name)
 
     function onTrainerChanged() {
         setDebug(s => trainer.isDone() ? 'done 🖕' : '...');
@@ -22,6 +23,7 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
         setArrows(s => trainer.arrows);
         onOrientationChanged()
         onHintChanged();
+        onNameChanged();
     }
 
     function onDrop(from, to) {
@@ -91,8 +93,8 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
                         boardWidth={350}
                     />
                     <div style={{textAlign:'left'}}>
+                        <div>🤴: {name}</div>
                         <div>🐛: {JSON.stringify(debug)}</div>
-                        
                         <div><span onClick={onShowHint}>🧠</span>: {hint}</div>
                     </div>
                 </Row>
