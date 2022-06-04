@@ -5,6 +5,7 @@ import { ChessTrainerBuilder } from './ChessTrainerBuilder'
 import { Container, Row, Col } from 'react-bootstrap';
 import { RepositoryView } from "./RepositoryView";
 import { Branch } from "./ChessTrainerShared";
+import { useProxyState } from "./useProxyState";
 
 type TrainerBuilderViewProps = {
     trainer: ChessTrainerBuilder
@@ -16,6 +17,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     // const [currentMove, setCurrentMove] = useState(null)
     const [repository, setRepository] = useState(() => trainer.repository);
     const [currentBranch, setCurrentBranch] = useState(() => trainer.currentBranch);
+    const [orientation, onOrientationChanged] = useProxyState(() => trainer.orientation);
 
     function onSaveBuild() {
         trainer.saveBuild();
@@ -26,6 +28,8 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
         setFen(s => trainer.fen);
         // setCurrentMove(s => trainer.currentBranch)
         setRepository(s => trainer.repository)
+        onOrientationChanged();
+
     }
 
     function onDrop(from, to) {
@@ -38,9 +42,8 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     }
 
     function onBack() {
-        if('parent' in trainer.currentBranch)
-            trainer.currentBranch = trainer.currentBranch.parent;
-            onTrainerChanged()
+        trainer.currentBranch = trainer.currentBranch.parent;
+        onTrainerChanged()
     }
 
     function onDelete() {
@@ -52,7 +55,17 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
 
     function onSelected(b: Branch) {
         setCurrentBranch(b);
-        trainer.loadBranch(b);
+        trainer.currentBranch = b;
+        onTrainerChanged();
+    }
+
+    function onSwitch() {
+        trainer.orientation = trainer.orientation == 'white' ? 'black' : 'white';
+        onTrainerChanged();
+    }
+
+    function onReset() {
+        trainer.reset();
         onTrainerChanged();
     }
 
@@ -60,10 +73,11 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
         <Container>
             <Row>
                 <Col>
-                    <button onClick={() => trainer.reset()}>reset</button>
+                    <button onClick={onReset}>reset</button>
                     <button onClick={onBack}>back</button>
                     <button onClick={onDelete}>delete</button>
                     <button onClick={onSaveBuild}>save build</button>
+                    <button onClick={onSwitch}>♽</button>
                     <button onClick={() => onTrainerChanged()}>refresh</button>
                     <Chessboard
                         boardOrientation={trainer.orientation}
@@ -74,7 +88,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
                     {/* <p>🧠: {JSON.stringify(debug)}~</p> */}
                 </Col>
                 <Col>
-                    <BranchView branch={currentBranch} onSave={() => {}}/>
+                    <BranchEditView branch={currentBranch} onSave={() => {}}/>
                     <RepositoryView 
                         repository={repository}
                         onSelected={onSelected}/>
@@ -84,7 +98,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
 
 }
 
-function BranchView({ branch, onSave }: { branch: Branch, onSave: () => void }) {
+function BranchEditView({ branch, onSave }: { branch: Branch, onSave: () => void }) {
 
     const [name, setName] = useState(() => branch.name);
     const [comment, setComment] = useState(() => branch.comment);
@@ -93,7 +107,6 @@ function BranchView({ branch, onSave }: { branch: Branch, onSave: () => void }) 
         setName(branch.name || '');
         setComment(branch.comment || '');
     }, [branch]);
-
 
     function onNameChanged(e) {
 
@@ -113,8 +126,8 @@ function BranchView({ branch, onSave }: { branch: Branch, onSave: () => void }) 
     return (
         <div>
             <p>{move}</p>
-            <input type='text' onChange={e => setName(e.target.value)} value={name} />
-            <input type='text' onChange={e => setComment(e.target.value)} value={comment} />
+            <div>name: <input type='text' onChange={e => setName(e.target.value)} value={name} /></div>
+            <div>comment: <input type='text' onChange={e => setComment(e.target.value)} value={comment} /></div>
             <button onClick={handleSave}>save</button>
         </div>
     );

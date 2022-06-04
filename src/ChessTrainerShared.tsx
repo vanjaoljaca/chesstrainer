@@ -22,7 +22,7 @@ export type MoveBranch = {
 
 export type FenBranch = {} /* todo */
 
-export type RootBranch = Omit<MoveBranch, 'move' | 'played' | 'correct' | 'parent'>
+export type RootBranch = Omit<MoveBranch, 'move' | 'played' | 'correct'>
 
 export type Line = Branch[]
 

@@ -21,6 +21,7 @@ async function getMoveRepositoryAsync() {
 }
 
 function App() {
+  let [playing, setPlaying] = useState(true);
   let [building, setBuilding] = useState(false)
   let [repository, setRepository] = useState<Repository>(null)
   let [trainerBuilder, setTrainerBuilder] = useState<ChessTrainerBuilder>(null)
@@ -45,11 +46,53 @@ function App() {
 
   function onOutputRepo() {
     repository.dedupe();
-    console.log(repository.json())
+    let json = repository.json();
+    console.log(json)
+    navigator.clipboard.writeText(json)
   }
 
+  function onPlayWhite() {
+    trainer.orientation = 'white'
+    trainer.reset();
+    setBuilding(false);
+    setPlaying(true);
+  }
+
+  function onPlayBlack() {
+    trainer.orientation = 'black'
+    trainer.reset();
+    setBuilding(false);
+    setPlaying(true);
+  }
+
+  function onToggleEdit() {
+    if(playing) {
+      setTrainerBuilder(tb => {
+        tb.currentBranch = trainer.currentBranch
+        return tb
+      })
+    } else {
+      trainer.currentBranch = trainerBuilder.currentBranch;
+      setTrainer(t => {
+        t.currentBranch = trainerBuilder.currentBranch
+        return t
+      })
+    }
+    setBuilding(b => !b)
+    setPlaying(p => !p);
+  }
+
+  // if(!playing && !building) {
+  //   return (
+  //     <div>
+  //       <button onClick={onPlayWhite}>play white</button>
+  //       <button onClick={onPlayBlack}>play black</button>
+  //       <button onClick={onEdit}>edit</button>
+  //     </div>)
+  // }
+
   if(!repository) {
-    return <p>loading...</p>
+    return <p>loading</p>
   }
 
   let coreView = building
@@ -66,11 +109,11 @@ function App() {
       />
       {/* <link rel="stylesheet" type="text/css" href="react-treeview.css"></link> */}
       <header className="App-header">
-        <div>
-          <button onClick={() => setBuilding(b => !b)}>{building ? 'building' : 'playing'}</button>
+        <div style={{textAlign:'left'}}>
+          <button onClick={onToggleEdit}>{building ? 'play' : 'edit'}</button>
           <button onClick={onOutputRepo}>output repo</button>
         </div>
-        {coreView}
+        {coreView}    
       </header>
     </div>
   );

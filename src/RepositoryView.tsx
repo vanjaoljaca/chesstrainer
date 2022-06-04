@@ -22,7 +22,7 @@ function BranchView({ branch, level, onSelected, selected }) {
             {/* <input type='checkbox'>{branch.name} {branch.move.from} {branch.move.to}</input> */}
             <TreeView 
                 nodeLabel={(
-                    level + ' ' + branch.move.from + '->' + branch.move.to + (branch === selected ? ' * ' : ' ') + (branch.comment ? branch.comment : '')
+                    level + ' ' + branch.move.from + '->' + branch.move.to + (branch === selected ? ' * ' : ' ') + (branch.name ? branch.name : '')
                 )}
                 // collapsed={false}
                 onClick={onClick}>

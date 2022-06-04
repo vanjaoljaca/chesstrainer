@@ -10,53 +10,50 @@ export class ChessTrainer {
     repository: Repository;
     line: (Branch | RootBranch)[] = [];
     currentLine: Branch[] = []
-    currentBranch: Branch | RootBranch = null
+    private _currentBranch: Branch | RootBranch = null
     end: boolean = false
     orientation: Orientation = 'black'
     arrows: [Square, Square][] = []
     buildLine: ShortMove[] = []
     branchesFromFen: Map<Fen, Branch[]>
+    hint: string
 
     constructor(repository: Repository, orientation?: Orientation) {
         this.game = new Chess();
         this.repository = repository;
         this.orientation = orientation;
-        this.currentBranch = this.repository.root
-    }
-
-    loadBranch(branch) {
-        let line = []
-        var current = branch;
-        while(current != null) { 
-            line.push(current);
-            current = current.parent;
-        }
-        line.reverse();
-        this.reset();
-        for(let b of line) {
-            this.game.move(b.move);
-        }
-        this.currentBranch = branch;
+        this._currentBranch = this.repository.root
     }
 
     tryMove(from: Square, to: Square) {
         if (!this.isHumanMove())
             throw Error('Not human move.')
 
-        let branches = this.currentBranch.branches;
+        let branches = this._currentBranch.branches;
         let candidate = branches.find(b => moveEquals(b.move, { from, to }));
         if (candidate == null) {
-            this.arrows = branches.map(b => [b.move.from, b.move.to]);
+            this.showHint()
             return null;
         }
+        this.clearHint();
         let nextBranch = candidate;
         let nextMove = nextBranch.move;
        
-        this.currentBranch = nextBranch;
+        this._currentBranch = nextBranch;
         this.line.push(nextBranch)
         this.currentLine.push(nextBranch)
         this.game.move(nextMove);
-        return this.currentBranch;
+        return this._currentBranch;
+    }
+
+    showHint() {
+        this.arrows = this._currentBranch.branches.map(b => [b.move.from, b.move.to]);
+        this.hint = this._currentBranch.comment
+    }
+
+    clearHint() {
+        this.arrows = [];
+        this.hint = null;
     }
 
     doComputerMove() {
@@ -65,11 +62,11 @@ export class ChessTrainer {
         }
 
         // let branches = this.branchesFromFen[this.game.fen()]
-        if(!this.currentBranch) {
+        if(!this._currentBranch) {
             return;
         }
 
-        let branches = this.currentBranch.branches;
+        let branches = this._currentBranch.branches;
         if (!branches || branches.length === 0) {
             this.end = true;
             console.log('end of line')
@@ -79,7 +76,7 @@ export class ChessTrainer {
         let nextBranch = candidate;
         let nextMove = nextBranch.move;
         this.game.move(nextMove);
-        this.currentBranch = nextBranch;
+        this._currentBranch = nextBranch;
         this.currentLine.push(nextBranch)
         return nextBranch;
     }
@@ -87,7 +84,7 @@ export class ChessTrainer {
     reset() {
         this.buildLine = []
         this.game.reset();
-        this.currentBranch = this.repository.root
+        this._currentBranch = this.repository.root
         this.currentLine = []
     }
 
@@ -97,7 +94,7 @@ export class ChessTrainer {
 
     playLine(line: Line) {
         this.line = line;
-        this.currentBranch = this.repository.root
+        this._currentBranch = this.repository.root
         this.game.reset();
         if (this.isComputerMove()) {
             this.doComputerMove();
@@ -106,12 +103,12 @@ export class ChessTrainer {
 
     getRandomLine(repository: RootBranch): Line {
         let line = [];
-        var currentBranches = repository.branches;
+        var _currentBranches = repository.branches;
         var current = null;
-        while (currentBranches != null && currentBranches.length !== 0) {
-            let i = Math.floor(Math.random() * currentBranches.length);
-            current = currentBranches[i];
-            currentBranches = current.branches;
+        while (_currentBranches != null && _currentBranches.length !== 0) {
+            let i = Math.floor(Math.random() * _currentBranches.length);
+            current = _currentBranches[i];
+            _currentBranches = current.branches;
             line.push(current);
         }
         return line;
@@ -130,6 +127,29 @@ export class ChessTrainer {
     }
 
     isDone() {
-        return this.currentBranch.branches.length === 0;
+        return this._currentBranch.branches.length === 0;
+    }
+
+    get currentBranch() {
+        return this._currentBranch;
+    }
+
+    set currentBranch(b: Branch) {
+        this.loadBranch(b);
+    }
+
+    private loadBranch(branch) {
+        let line = []
+        var current = branch;
+        while(current != null) { 
+            line.push(current);
+            current = current.parent;
+        }
+        line.reverse();
+        this.reset();
+        for(let b of line) {
+            this.game.move(b.move);
+        }
+        this._currentBranch = branch;
     }
 }
