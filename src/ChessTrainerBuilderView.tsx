@@ -17,7 +17,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     // const [currentMove, setCurrentMove] = useState(null)
     const [repository, setRepository] = useState(() => trainer.repository);
     const [currentBranch, setCurrentBranch] = useState(() => trainer.currentBranch);
-    const [orientation, onOrientationChanged] = useProxyState(() => trainer.orientation);
+    const [orientation, onOrientationChanged] = useProxyState(() => trainer.orientation, [trainer.orientation]);
     const [debug, setDebug] = useState('');
     const [bulkAddMoves, setBulkAddMoves] = useState('')
 

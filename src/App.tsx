@@ -69,12 +69,14 @@ function App() {
     if(playing) {
       setTrainerBuilder(tb => {
         tb.currentBranch = trainer.currentBranch
+        tb.orientation = trainer.orientation
         return tb
       })
     } else {
       trainer.currentBranch = trainerBuilder.currentBranch;
       setTrainer(t => {
         t.currentBranch = trainerBuilder.currentBranch
+        t.orientation = trainerBuilder.orientation
         return t
       })
     }

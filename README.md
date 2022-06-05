@@ -7,17 +7,22 @@ React app for drilling chess openings.
 ## TODO
 
 sprint:
-- on move, briefly show moves that could have been played
-- click edit does not preserve orientation
+- back on trainer view
+- add more white and black lines
+- toggle button to show available moves
 - tags
+- mistake counter, max mistakes option
 
 recently done:
+- on move, briefly show moves that could have been played
 - play white
 - delete node
 - hint button & hint text
 - back 1 move button
 - repository dedupe
 - bug: auto-play gets stuck when opposite is last move
+- fix: click edit does not preserve orientation
+- different color arrows
 
 backlog:
 - linq:
