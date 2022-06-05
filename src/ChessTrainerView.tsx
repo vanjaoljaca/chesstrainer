@@ -5,6 +5,7 @@ import { ChessTrainer } from './ChessTrainer'
 import { Container, Row, Col } from 'react-bootstrap';
 import { useProxyState } from "./useProxyState";
 import ToggleButton from 'react-toggle-button'
+import { Branch } from "./ChessTrainerShared";
 
 type TrainerViewProps = {
     trainer: ChessTrainer
@@ -14,6 +15,7 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
     const DefaultDelay = 200
     const DefaultSlowDelay = 1500;
     const DoneDelay = 3000
+    const MaxErrors = 3;
 
     const AltOptionArrowColor = 'Silver'
     const MistakeArrowColor = 'SandyBrown'
@@ -28,6 +30,7 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
     const [trainPast, setTrainPast] = useState(false)
     const [autoCompute, setAutoCompute] = useState(true)
     const [showOptions, setShowOptions] = useState(false)
+    const [errorCount, setErrorCount] = useState(0);
 
     function onTrainerChanged() {
         setDebug(s => trainer.isDone() ? 'done 🖕' : '...');
@@ -68,9 +71,23 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
     }
 
     function onDrop(from, to) {
-        let result = trainer.tryMove(from, to);
+        var result: Branch;
+        try {
+            result = trainer.tryMove(from, to);
+        } catch(e) {
+            setDebug(e.cause)
+            return;
+        }
+
         onTrainerChanged();
         if (!result) {
+            if(errorCount >= MaxErrors) {
+                setErrorCount(0);
+                setDebug('Too many mistakes. Resetting.')
+                setTimeout(() => onReset(), DefaultSlowDelay);
+                return false;
+            }
+            setErrorCount(c => c+1)
             return false;
         }
         showWhatCouldHaveBeen();
@@ -114,11 +131,19 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
         onTrainerChanged();
     }
 
+    function onBack() {
+        trainer.currentBranch = trainer.currentBranch.parent;
+        if(trainer.currentBranch)
+            trainer.currentBranch = trainer.currentBranch.parent;
+        onTrainerChanged()
+    }
+
     return (
         <Container>
             <Col>
                 <Row>
                     <div style={{ textAlign: 'left' }}>
+                        <button onClick={onBack}>back</button>
                         <button onClick={doComputerMove}>compute</button>
                         <button onClick={onSwitch}>♽</button>
                         <button onClick={onReset}>reset</button>

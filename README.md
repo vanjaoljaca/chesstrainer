@@ -7,13 +7,18 @@ React app for drilling chess openings.
 ## TODO
 
 sprint:
-- back on trainer view
 - add more white and black lines
-- toggle button to show available moves
 - tags
-- mistake counter, max mistakes option
+- fix: bad placement breaks game
+- max depth for trainer
+- pgn loader
+- trainer: allow move-for-computer when computer is off
+- "answer needed" tag
 
 recently done:
+- fix: mistake counter is abrupt
+- toggle button to show available moves (brain)
+- back on trainer view
 - on move, briefly show moves that could have been played
 - play white
 - delete node

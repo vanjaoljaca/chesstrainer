@@ -29,6 +29,12 @@ export class ChessTrainer {
         if (!this.isHumanMove())
             throw Error('Not human move.')
 
+        let isValid = this.game.move({from, to})
+        this.game.undo();
+
+        if(!isValid)
+            throw Error('Not a valid move')
+
         let branches = this._currentBranch.branches;
         let candidate = branches.find(b => moveEquals(b.move, { from, to }));
         if (candidate == null) {
@@ -86,6 +92,7 @@ export class ChessTrainer {
         this.game.reset();
         this._currentBranch = this.repository.root
         this.currentLine = []
+        this.arrows = []
     }
 
     playRandomLine() {
