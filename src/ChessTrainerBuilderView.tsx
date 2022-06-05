@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import './App.css';
-import { Chessboard } from "react-chessboard";
+import { Chessboard, Square } from "react-chessboard";
 import { ChessTrainerBuilder } from './ChessTrainerBuilder'
 import { Container, Row, Col } from 'react-bootstrap';
 import { RepositoryView } from "./RepositoryView";
@@ -18,6 +18,8 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     const [repository, setRepository] = useState(() => trainer.repository);
     const [currentBranch, setCurrentBranch] = useState(() => trainer.currentBranch);
     const [orientation, onOrientationChanged] = useProxyState(() => trainer.orientation);
+    const [debug, setDebug] = useState('');
+    const [bulkAddMoves, setBulkAddMoves] = useState('')
 
     function onSaveBuild() {
         trainer.saveBuild();
@@ -33,7 +35,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     }
 
     function onDrop(from, to) {
-        let result = trainer.tryMove(from, to);
+        let result = trainer.tryMove({from, to});
         onTrainerChanged();
         if (!result) {
             return false;
@@ -60,13 +62,37 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     }
 
     function onSwitch() {
-        trainer.orientation = trainer.orientation == 'white' ? 'black' : 'white';
+        trainer.orientation = trainer.orientation === 'white' ? 'black' : 'white';
         onTrainerChanged();
     }
 
     function onReset() {
         trainer.reset();
         onTrainerChanged();
+    }
+
+    function onBulkAddMoves(text: string) {
+        for(let line of text.split('\n')) {
+            let r = trainer.tryMove(line);
+            if(r == null) {
+                setDebug('failed to play: ' + line);
+                break;
+            }
+        }
+        setBulkAddMoves('')
+        onTrainerChanged();
+    }
+
+    function handleSquareClick(s: Square) {
+
+    }
+
+    function handleSquareRightClick(s: Square) {
+
+    }
+
+    function handleClearDebug() {
+        setDebug('')
     }
 
     return (
@@ -80,22 +106,46 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
                     <button onClick={onSwitch}>♽</button>
                     <button onClick={() => onTrainerChanged()}>refresh</button>
                     <Chessboard
-                        boardOrientation={trainer.orientation}
+                        boardOrientation={orientation}
                         position={fen} onPieceDrop={onDrop}
+                        onSquareClick={handleSquareClick}
+                        onSquareRightClick={handleSquareRightClick}
                         boardWidth={350}
                     />
 
-                    {/* <p>🧠: {JSON.stringify(debug)}~</p> */}
+                    <p><span onClick={handleClearDebug}>🧠</span>: {JSON.stringify(debug)}~</p>
                 </Col>
                 <Col>
                     <BranchEditView branch={currentBranch} onSave={() => {}}/>
                     <RepositoryView 
                         repository={repository}
                         onSelected={onSelected}/>
+                    <BulkAddMovesView moves={bulkAddMoves} onAdd={onBulkAddMoves} />
                 </Col>
             </Row>
         </Container>);
 
+}
+
+function BulkAddMovesView({moves, onAdd}) {
+    const [movesText, setMovesText] = useState('');
+
+    useEffect(() => {
+        setMovesText(moves);
+    }, [moves])
+
+    function handleAdd() {
+        onAdd(movesText);
+    }
+    return (
+        <div>
+            moves: <textarea
+            onChange={e => setMovesText(e.target.value)} 
+            value={movesText}
+            />
+            <button onClick={handleAdd}>add</button>
+        </div>
+    )
 }
 
 function BranchEditView({ branch, onSave }: { branch: Branch, onSave: () => void }) {
@@ -107,14 +157,6 @@ function BranchEditView({ branch, onSave }: { branch: Branch, onSave: () => void
         setName(branch.name || '');
         setComment(branch.comment || '');
     }, [branch]);
-
-    function onNameChanged(e) {
-
-    }
-
-    function onCommentChanged(e) {
-
-    }
 
     function handleSave() {
         console.log(name, comment);

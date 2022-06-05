@@ -10,6 +10,10 @@ type TrainerViewProps = {
 }
 
 export function ChessTrainerView({ trainer }: TrainerViewProps) {
+    const DefaultDelay = 200
+    const DefaultSlowDelay = 1500;
+    const DoneDelay = 3000
+
     const [debug, setDebug] = useState(null);
     const [fen, setFen] = useState(() => trainer.fen());
     const [arrows, setArrows] = useState([]);
@@ -26,25 +30,46 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
         onNameChanged();
     }
 
+    function checkDone() {
+        if (trainer.isDone()) {
+            setDebug(() => 'nice 🎉');
+            setTimeout(() => {
+                onPlayRandom();
+                onTrainerChanged();
+                setDebug(() => '...');
+            }, DoneDelay);
+            return;
+        }
+    }
+
+    function showWhatCouldHaveBeen() {
+        // todo: toggle for this feature
+        // todo: push this down into trainer?
+        let altOptions = trainer.currentBranch.parent.branches
+            .filter(b => b !== trainer.currentBranch)
+            .map(b => [b.move.from, b.move.to])
+        if(altOptions.length > 0) {
+            setArrows(altOptions)
+            setTimeout(() => setArrows([]), DefaultSlowDelay);
+        }
+    }
+
     function onDrop(from, to) {
         let result = trainer.tryMove(from, to);
         onTrainerChanged();
         if (!result) {
             return false;
         }
+        showWhatCouldHaveBeen();
+        
         setTimeout(() => {
-            if (trainer.isDone()) {
-                setDebug(() => 'nice 🎉');
-                setTimeout(() => {
-                    onPlayRandom();
-                    onTrainerChanged();
-                    setDebug(() => '...');
-                }, 1000);
-                return;
+            checkDone()
+            if (trainer.isComputerMove()) {
+                trainer.doComputerMove();
+                onTrainerChanged();
+                setTimeout(() => checkDone(), DefaultDelay);
             }
-            if (trainer.isComputerMove()) trainer.doComputerMove();
-            onTrainerChanged();
-        }, 200);
+        }, DefaultDelay);
         return true;
     }
 
@@ -61,7 +86,7 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
     }
 
     function onSwitch() {
-        trainer.orientation = trainer.orientation == 'white' ? 'black' : 'white';
+        trainer.orientation = trainer.orientation === 'white' ? 'black' : 'white';
         onTrainerChanged();
     }
 

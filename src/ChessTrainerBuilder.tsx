@@ -1,8 +1,10 @@
 import './App.css';
 // https://github.com/jhlywa/chess.js/blob/master/README.md
-import { Chess, ChessInstance, Square } from "chess.js";
-import { Branch, Orientation, RootBranch, moveEquals, branch, MoveBranch } from './ChessTrainerShared';
+import { Chess, ChessInstance, Move, ShortMove } from "chess.js";
+import { Branch, Orientation, moveEquals, branch, MoveBranch } from './ChessTrainerShared';
 import { Repository } from './Repository';
+
+export type San = string
 
 export class ChessTrainerBuilder {
     
@@ -20,16 +22,19 @@ export class ChessTrainerBuilder {
         this._currentBranch = this.repository.root
     }
 
-    tryMove(from: Square, to: Square) {
-
-        if (!this.game.move({ from, to })) {
+    tryMove(san: San | ShortMove) {
+        let move = this.game.move(san);
+        if (!move) {
             return null;
         }
-        
+        return this.move(move);
+    }
+
+    private move(move: Move) {
         let branches = this._currentBranch.branches;
-        var candidate = branches.find(b => moveEquals(b.move, { from, to }));
+        var candidate = branches.find(b => moveEquals(b.move, move));
         if (candidate == null) {
-            let newBranch = branch({ from, to });
+            let newBranch = branch(move);
             newBranch.parent = this._currentBranch;
             this.buildLine.push(newBranch);
             candidate = newBranch;

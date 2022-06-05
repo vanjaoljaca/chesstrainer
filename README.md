@@ -7,7 +7,9 @@ React app for drilling chess openings.
 ## TODO
 
 sprint:
-- bug: auto-play gets stuck when opposite is last move
+- on move, briefly show moves that could have been played
+- click edit does not preserve orientation
+- tags
 
 recently done:
 - play white
@@ -15,6 +17,7 @@ recently done:
 - hint button & hint text
 - back 1 move button
 - repository dedupe
+- bug: auto-play gets stuck when opposite is last move
 
 backlog:
 - linq:
@@ -29,3 +32,5 @@ backlog:
 - separate moves from statistics
 - denote moves that are 'critical line' for theory
 - tags for moves
+- list possible named targets below current branch
+- target branch for trainer
