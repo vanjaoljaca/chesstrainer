@@ -40,10 +40,12 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
         if (!result) {
             return false;
         }
+        onSaveBuild(); // todo: this is creating duplicates. why???
         return true;
     }
 
     function onBack() {
+        onSaveBuild()
         trainer.currentBranch = trainer.currentBranch.parent;
         onTrainerChanged()
     }
@@ -102,7 +104,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
                     <button onClick={onReset}>reset</button>
                     <button onClick={onBack}>back</button>
                     <button onClick={onDelete}>delete</button>
-                    <button onClick={onSaveBuild}>save build</button>
+                    {/* <button onClick={onSaveBuild}>save build</button> */}
                     <button onClick={onSwitch}>♽</button>
                     <button onClick={() => onTrainerChanged()}>refresh</button>
                     <Chessboard

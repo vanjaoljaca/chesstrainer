@@ -7,6 +7,7 @@ React app for drilling chess openings.
 ## TODO
 
 sprint:
+- back button seems to delete latest line if not saved... (fix duplicates being created)
 - add more white and black lines
 - tags
 - fix: bad placement breaks game
