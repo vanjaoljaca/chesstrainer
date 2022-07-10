@@ -1,4 +1,9 @@
-import { Repository } from "./Repository";
+
+export type Module = {
+  name: string,
+  source: 'remote' | 'local' | 'new'
+}
+
 
 async function getMoveRepositoryAsync() {
     let r = await fetch('/moverepository.json', {
@@ -28,12 +33,13 @@ export class ModuleBrowser {
 
     modules: string[] = [];
 
-    constructor() {
-        this.modules = this.loadLocal();
+    loadLocalNames(): string[] {
+      return JSON.parse(localStorage.getItem(ModuleBrowser.ModuleBrowser_KEY)) || [];
     }
 
-    loadLocal(): string[] {
-        let jsons = JSON.parse(localStorage.getItem(ModuleBrowser.ModuleBrowser_KEY)) || [];
+    loadLocal(): Module[] {
+        let jsons = this.loadLocalNames();
+        console.log('loaded local', jsons)
         return jsons.map(m => { return { name: m, source: 'local' } });
     }
 
@@ -55,9 +61,9 @@ export class ModuleBrowser {
         return jsons;
     }
 
-    saveLocalRepository(name: string, json: string) {
+      saveLocalRepository(name: string, json: string) {
         localStorage.setItem(ModuleBrowser.ModuleBrowser_PREFIX + name, json);
-        let local = this.loadLocal();
+        let local = this.loadLocalNames();
         console.log('local', local)
         if(local.indexOf(name) === -1)
             local.push(name);

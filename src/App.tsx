@@ -9,12 +9,11 @@ import { ChessTrainerBuilderView } from './ChessTrainerBuilderView'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Repository } from "./Repository";
 import { Orientation } from "./ChessTrainerShared";
-import { ModuleBrowser } from "./ModuleBrowser";
-import { json } from "stream/consumers";
+import { ModuleBrowser, Module } from "./ModuleBrowser";
 
-function ModuleSelector({options, onSelected}) {
+function ModuleSelector({options, onSelected}: {options: Module[], onSelected: (module: Module) => void}) {
   let [name, setName] = useState<string>('')
-  let [option, setOption] = useState(options[0]);
+  let [option, setOption] = useState<Module>(options[0]);
 
   function handleSelected(v) {
     onSelected(v);
@@ -43,8 +42,8 @@ function App() {
   let [trainerBuilder, setTrainerBuilder] = useState<ChessTrainerBuilder>(null)
   let [trainer, setTrainer] = useState<ChessTrainer>(null)
   let [moduleManager, _] = useState<ModuleBrowser>(() => new ModuleBrowser())
-  let [modules, setModules] = useState<[]>([]);
-  let [module, setModule] = useState<any>(null)
+  let [modules, setModules] = useState<Module[]>([]);
+  let [module, setModule] = useState<Module>(null)
 
   async function initializeJson() {
     let remoteModules = await moduleManager.loadRemoteAsync();
@@ -54,7 +53,7 @@ function App() {
     console.log('modules loaded', allModules)
   }
 
-  async function loadRemoteJson(module) {
+  async function loadRemoteJson(module: Module) {
     console.log('loading remote json', module, JSON.stringify(module))
     let orientation: Orientation = 'black'
     let repository = new Repository();
@@ -76,6 +75,7 @@ function App() {
   }
 
   function onSaveModule() {
+    console.log('saving module', module)
     moduleManager.saveLocalRepository(module.name, repository.json());
   }
 
