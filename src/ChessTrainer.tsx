@@ -142,7 +142,7 @@ export class ChessTrainer {
     }
 
     set currentBranch(b: Branch) {
-        this.loadBranch(b);
+        this.loadBranch(b || this.repository.root);
     }
 
     private loadBranch(branch) {

@@ -7,14 +7,17 @@ React app for drilling chess openings.
 ## TODO
 
 sprint:
+
+- fix edit name/descriptiion
+- load pgp
 - breadcrumbs & navigation
-- its really ugly
-- default option not selectable by ModuleBrowser
+
+- serializing / deserlialization method for moves to remove fluff
 - when playing black have to press compute to get white to start
 - when switching sides also...
 
 - method to export from phone to whatever (share)
-- back button seems to delete latest line if not saved... (fix duplicates being created)
+
 - add more white and black lines
 - tags
 - fix: bad placement breaks game
@@ -22,6 +25,14 @@ sprint:
 - pgn loader
 - trainer: allow move-for-computer when computer is off
 - "answer needed" tag
+
+more recently done:
+- modules
+- breadcrumbs view
+- add scrolling where needed temporarily (ie div belo)
+- back button seems to delete latest line if not saved... (fix duplicates being created)
+- default option not selectable by ModuleBrowser
+- its really ugly
 
 recently done:
 - duplicates are crashing me

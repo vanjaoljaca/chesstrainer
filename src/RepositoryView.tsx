@@ -85,7 +85,7 @@ export function RepositoryView({ repository, onSelected }: RepositoryViewProps) 
         : parentLevel.branches;
     
     return (
-        <div style={{border: 'solid', textAlign: 'left'}}>
+        <div style={{border: 'solid', textAlign: 'left', overflowX: 'auto'}}>
             <h3>Moves</h3>
             {/* <p>root is repository: {root === repository.root.branches ? 'true' : 'false'}</p>
             <p>findParentLevel: {parentLevel != null && 'move' in parentLevel ? parentLevel.move.from : 'null'}</p> */}

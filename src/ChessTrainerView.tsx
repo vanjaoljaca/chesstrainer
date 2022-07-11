@@ -2,7 +2,7 @@ import { useState } from "react";
 import './App.css';
 import { Chessboard } from "react-chessboard";
 import { ChessTrainer } from './ChessTrainer'
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, NavDropdown } from 'react-bootstrap';
 import { useProxyState } from "./useProxyState";
 import ToggleButton from 'react-toggle-button'
 import { Branch } from "./ChessTrainerShared";
@@ -132,7 +132,8 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
     }
 
     function onBack() {
-        trainer.currentBranch = trainer.currentBranch.parent;
+        if (trainer.currentBranch)
+            trainer.currentBranch = trainer.currentBranch.parent;
         if (trainer.currentBranch)
             trainer.currentBranch = trainer.currentBranch.parent;
         onTrainerChanged()
@@ -140,15 +141,13 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
 
     function Menu() {
         return (
-            <Row>
-                <div style={{ textAlign: 'left' }}>
-                    <button onClick={onBack}>back</button>
-                    <button onClick={doComputerMove}>compute</button>
-                    <button onClick={onSwitch}>♽</button>
-                    <button onClick={onReset}>reset</button>
-                    <button onClick={() => setShowOptions(v => !v)}>options</button>
-                </div>
-            </Row>
+            <NavDropdown title="↕️🧵" id="navbarScrollingDropdown">
+                <NavDropdown.Item onClick={onBack}>back</NavDropdown.Item>
+                <NavDropdown.Item onClick={doComputerMove}>compute</NavDropdown.Item>
+                <NavDropdown.Item onClick={onSwitch}>switch sides</NavDropdown.Item>
+                <NavDropdown.Item onClick={onReset}>reset</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => setShowOptions(v => !v)}>options</NavDropdown.Item>
+            </NavDropdown>
         );
     }
 
@@ -187,6 +186,8 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
                         <div>🐛: {JSON.stringify(debug)}</div>
                         <div><span onClick={onShowHint}>🧠</span>: {hint}</div>
                     </div>
+                    <Menu />
+                    <MenuOptions />
                 </Row>
             </Col>
         </Container>)

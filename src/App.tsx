@@ -20,20 +20,24 @@ function ModuleSelector({ modules, onSelected }: { modules: Module[], onSelected
     onSelected(m);
   }
 
-  return <div>
-    <p>Select a module</p>
+  return (
+    <div>
+      <p>Select a module</p>
+      <div>
+        <select onChange={o => setModule(JSON.parse(o.target.value))}>
+          {modules.map(o =>
+            <option key={o.source + o.name} value={JSON.stringify(o)}>{o.source} {o.name}</option>
+          )}
+        </select>
 
-    <select onChange={o => setModule(JSON.parse(o.target.value))}>
-      {modules.map(o =>
-        <option key={o.source + o.name} value={JSON.stringify(o)}>{o.source} {o.name}</option>
-      )}
-    </select>
-
-    <button onClick={() => handleSelected(module)}>Load</button>
-    <label>name</label>
-    <input type='text' onChange={e => setName(e.target.value)} value={name}></input>
-    <button onClick={() => handleSelected({ source: 'new', name })}>New</button>
-  </div>
+        <button onClick={() => handleSelected(module)}>Load</button>
+      </div>
+      <div>
+        <label>name</label>
+        <input type='text' onChange={e => setName(e.target.value)} value={name}></input>
+        <button onClick={() => handleSelected({ source: 'new', name })}>New</button>
+      </div>
+    </div>);
 }
 
 function App() {
@@ -116,7 +120,7 @@ function App() {
 
   function Menu({ contextual }) {
     return (
-      <Navbar bg="light" expand="lg" style={{color: '#282c34'}} variant='light'>
+      <Navbar bg="light" expand="lg" style={{ color: '#282c34' }} variant='light'>
         <Container>
           <Navbar.Brand>♟ {module === null ? 'Chess Trainer' : module.name}</Navbar.Brand>
           <Nav.Item onClick={onToggleEdit}>{building ? 'Play' : 'Edit'}</Nav.Item>
@@ -150,15 +154,18 @@ function App() {
   function ViewContent() {
     if (module == null) {
       return (
-        <div>
-          <h3>Chess Trainer</h3>
+        <div className="App-content">
+          <div>
+          <h3>♟ Chess Trainer</h3>
           <ModuleSelector modules={modules} onSelected={onModuleSelected} />
+          </div>
         </div>)
     }
 
     return (
       <div>
         <Menu contextual={null} />
+        <p />
         <div className="App-content">
           {building
             ? <ChessTrainerBuilderView trainer={trainerBuilder} />

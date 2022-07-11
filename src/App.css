@@ -1,3 +1,9 @@
+html, body {
+  margin: 0; 
+  height: 100%; 
+  overflow: hidden
+}
+
 .App {
   text-align: center;
   background-color: #282c34;
@@ -7,12 +13,19 @@
   /* /* align-items: center; */
   font-size: calc(10px + 2vmin);
   color: white;
+  /* overflow-y: hidden;
+  overflow-x: hidden;  */
 }
 
 .App-content {
   justify-content: center;
   align-items: center;
   display: 'flex';
+  min-height: 100vh;
+  max-height: 100vh;
+  flex-direction: column;
+  justify-items: center;
+  align-content: center;
 }
 
 .App-logo {

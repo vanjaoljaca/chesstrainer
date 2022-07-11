@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import './App.css';
 import { Chessboard, Square } from "react-chessboard";
 import { ChessTrainerBuilder } from './ChessTrainerBuilder'
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, NavDropdown } from 'react-bootstrap';
 import { RepositoryView } from "./RepositoryView";
 import { Branch } from "./ChessTrainerShared";
 import { useProxyState } from "./useProxyState";
@@ -16,7 +16,16 @@ function Breadcrumbs({ currentBranch, onSelected }: { currentBranch: Branch, onS
     for (var b = currentBranch; b != null; b = b.parent) {
         items.push(b);
     }
-    return <div>{items.map((b, i) => <div key={i}>{JSON.stringify(b.move)}</div>)}</div>
+    return (
+        <div style={{ display: 'flex', overflowY: 'scroll' }}>
+            {items.map((b, i) => 
+                <div key={i}
+                    style={{ margin: '2px', fontSize: '12px' }}>
+                    {b.move && (b.move.san ? b.move.san : (b.move.from + '-' + b.move.to))}
+                </div>
+            )}
+        </div>
+    );
 }
 
 export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
@@ -47,7 +56,8 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     }
 
     function onBack() {
-        trainer.currentBranch = trainer.currentBranch.parent;
+        if(trainer.currentBranch && trainer.currentBranch.parent)
+            trainer.currentBranch = trainer.currentBranch.parent;
         onTrainerChanged()
     }
 
@@ -99,21 +109,22 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     }
 
     function Menu() {
-        (
-            <div>
-                <button onClick={onReset}>reset</button>
-                <button onClick={onBack}>back</button>
-                <button onClick={onDelete}>delete</button>
-                {/* <button onClick={onSaveBuild}>save build</button> */}
-                <button onClick={onSwitch}>♽</button>
-                <button onClick={() => onTrainerChanged()}>refresh</button>
-            </div>)
+        return (
+            <NavDropdown title="menu2" id="navbarScrollingDropdown">
+                <NavDropdown.Item onClick={onReset}>reset</NavDropdown.Item>
+                <NavDropdown.Item onClick={onBack}>back</NavDropdown.Item>
+                <NavDropdown.Item onClick={onDelete}>delete</NavDropdown.Item>
+                {/* <button onClick={onSaveBuild}>save build</NavDropdown.Item> */}
+                <NavDropdown.Item onClick={onSwitch}>♽</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => onTrainerChanged()}>refresh</NavDropdown.Item>
+            </NavDropdown>
+            )
     }
 
     return (
-        <Container>
-            <Row>
-                <Col>
+        <Container >
+            <Row >
+                <Col >
                     <Breadcrumbs currentBranch={currentBranch} onSelected={onSelected} />
                     <Chessboard
                         boardOrientation={orientation}
@@ -124,12 +135,15 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
                     />
                     <p><span onClick={handleClearDebug}>🧠</span>: {JSON.stringify(debug)}~</p>
                 </Col>
-                <Col>
-                    <BranchEditView branch={currentBranch} onSave={() => { }} />
-                    <RepositoryView
-                        repository={repository}
-                        onSelected={onSelected} />
-                    <BulkAddMovesView moves={bulkAddMoves} onAdd={onBulkAddMoves} />
+                <Col style={{ overflowY: 'scroll', maxHeight: '100vh', overflowX: 'hidden' }}>
+                    <div style={{ minHeight: 0 }}>
+                        <Menu />
+                        <BranchEditView branch={currentBranch} onSave={() => { }} />
+                        <RepositoryView
+                            repository={repository}
+                            onSelected={onSelected} />
+                        <BulkAddMovesView moves={bulkAddMoves} onAdd={onBulkAddMoves} />
+                    </div>
                 </Col>
             </Row>
         </Container>);
