@@ -11,6 +11,14 @@ type TrainerBuilderViewProps = {
     trainer: ChessTrainerBuilder
 }
 
+function Breadcrumbs({ currentBranch, onSelected }: { currentBranch: Branch, onSelected: (branch: Branch) => void }) {
+    let items = [];
+    for (var b = currentBranch; b != null; b = b.parent) {
+        items.push(b);
+    }
+    return <p>{items.map((b, i) => <div key={i}>{JSON.stringify(b.move)}</div>)}</p>
+}
+
 export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     // const [debug, setDebug] = useState(null);
     const [fen, setFen] = useState(() => trainer.fen);
@@ -21,11 +29,6 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     const [debug, setDebug] = useState('');
     const [bulkAddMoves, setBulkAddMoves] = useState('')
 
-    function onSaveBuild() {
-        trainer.saveBuild();
-        onTrainerChanged();
-    }
-
     function onTrainerChanged() {
         setFen(s => trainer.fen);
         // setCurrentMove(s => trainer.currentBranch)
@@ -35,23 +38,21 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     }
 
     function onDrop(from, to) {
-        let result = trainer.tryMove({from, to});
-        onTrainerChanged();
+        let result = trainer.tryMove({ from, to });
         if (!result) {
             return false;
         }
-        onSaveBuild(); // todo: this is creating duplicates. why???
+        onTrainerChanged();
         return true;
     }
 
     function onBack() {
-        onSaveBuild()
         trainer.currentBranch = trainer.currentBranch.parent;
         onTrainerChanged()
     }
 
     function onDelete() {
-        if('parent' in trainer.currentBranch) {
+        if ('parent' in trainer.currentBranch) {
             trainer.delete(trainer.currentBranch);
         }
         onTrainerChanged()
@@ -74,9 +75,9 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     }
 
     function onBulkAddMoves(text: string) {
-        for(let line of text.split('\n')) {
+        for (let line of text.split('\n')) {
             let r = trainer.tryMove(line);
-            if(r == null) {
+            if (r == null) {
                 setDebug('failed to play: ' + line);
                 break;
             }
@@ -97,16 +98,23 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
         setDebug('')
     }
 
+    function Menu() {
+        (
+            <div>
+                <button onClick={onReset}>reset</button>
+                <button onClick={onBack}>back</button>
+                <button onClick={onDelete}>delete</button>
+                {/* <button onClick={onSaveBuild}>save build</button> */}
+                <button onClick={onSwitch}>♽</button>
+                <button onClick={() => onTrainerChanged()}>refresh</button>
+            </div>)
+    }
+
     return (
         <Container>
             <Row>
                 <Col>
-                    <button onClick={onReset}>reset</button>
-                    <button onClick={onBack}>back</button>
-                    <button onClick={onDelete}>delete</button>
-                    {/* <button onClick={onSaveBuild}>save build</button> */}
-                    <button onClick={onSwitch}>♽</button>
-                    <button onClick={() => onTrainerChanged()}>refresh</button>
+                    <Breadcrumbs currentBranch={currentBranch} onSelected={onSelected} />
                     <Chessboard
                         boardOrientation={orientation}
                         position={fen} onPieceDrop={onDrop}
@@ -114,22 +122,20 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
                         onSquareRightClick={handleSquareRightClick}
                         boardWidth={350}
                     />
-
                     <p><span onClick={handleClearDebug}>🧠</span>: {JSON.stringify(debug)}~</p>
                 </Col>
                 <Col>
-                    <BranchEditView branch={currentBranch} onSave={() => {}}/>
-                    <RepositoryView 
+                    <BranchEditView branch={currentBranch} onSave={() => { }} />
+                    <RepositoryView
                         repository={repository}
-                        onSelected={onSelected}/>
+                        onSelected={onSelected} />
                     <BulkAddMovesView moves={bulkAddMoves} onAdd={onBulkAddMoves} />
                 </Col>
             </Row>
         </Container>);
-
 }
 
-function BulkAddMovesView({moves, onAdd}) {
+function BulkAddMovesView({ moves, onAdd }) {
     const [movesText, setMovesText] = useState('');
 
     useEffect(() => {
@@ -142,8 +148,8 @@ function BulkAddMovesView({moves, onAdd}) {
     return (
         <div>
             moves: <textarea
-            onChange={e => setMovesText(e.target.value)} 
-            value={movesText}
+                onChange={e => setMovesText(e.target.value)}
+                value={movesText}
             />
             <button onClick={handleAdd}>add</button>
         </div>
@@ -152,16 +158,10 @@ function BulkAddMovesView({moves, onAdd}) {
 
 function BranchEditView({ branch, onSave }: { branch: Branch, onSave: () => void }) {
 
-    const [name, setName] = useState(() => branch.name);
-    const [comment, setComment] = useState(() => branch.comment);
-
-    useEffect(() => {
-        setName(branch.name || '');
-        setComment(branch.comment || '');
-    }, [branch]);
+    const [name, setName] = useState(() => branch.name || '');
+    const [comment, setComment] = useState(() => branch.comment || '');
 
     function handleSave() {
-        console.log(name, comment);
         branch.name = name;
         branch.comment = comment;
     }

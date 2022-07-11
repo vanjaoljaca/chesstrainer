@@ -1,5 +1,9 @@
-import { Chess } from "chess.js";
+import { Chess, Move, ShortMove } from "chess.js";
 import { Branch, Fen, MoveBranch, moveEquals, RootBranch } from "./ChessTrainerShared";
+
+export function branch(move: ShortMove, ...branches: MoveBranch[]): MoveBranch {
+    return { move, branches: branches || [], played: 0, correct: 0 }
+}
 
 export class Repository {
 
@@ -18,6 +22,15 @@ export class Repository {
             branch.parent.branches.push(branch);
         }
         this.generateFenPartial(branches);
+    }
+
+    createBranch(parent: Branch, move: ShortMove): MoveBranch {
+        // todo check for dupe
+        let newBranch = branch(move);
+        newBranch.parent = parent;
+        parent.branches.push(newBranch);
+        this.generateFenPartial([newBranch]);
+        return newBranch;
     }
 
     removeBranches(branches: MoveBranch[]) {
@@ -59,7 +72,6 @@ export class Repository {
     }
 
     dedupe() {
-        console.log(this.root)
         let dedupe = (branch) => {
             let deduped = [];
             for(let child of branch.branches) {

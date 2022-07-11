@@ -39,7 +39,6 @@ export class ModuleBrowser {
 
     loadLocal(): Module[] {
         let jsons = this.loadLocalNames();
-        console.log('loaded local', jsons)
         return jsons.map(m => { return { name: m, source: 'local' } });
     }
 
@@ -64,11 +63,9 @@ export class ModuleBrowser {
       saveLocalRepository(name: string, json: string) {
         localStorage.setItem(ModuleBrowser.ModuleBrowser_PREFIX + name, json);
         let local = this.loadLocalNames();
-        console.log('local', local)
         if(local.indexOf(name) === -1)
             local.push(name);
         localStorage.setItem(ModuleBrowser.ModuleBrowser_KEY, JSON.stringify(local));
-        console.log('saved data', json, 'saved local', local);
     }
 
     async loadRemoteRepositoryAsync(name: string) {

@@ -74,20 +74,20 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
         var result: Branch;
         try {
             result = trainer.tryMove(from, to);
-        } catch(e) {
+        } catch (e) {
             setDebug(e.cause)
             return;
         }
 
         onTrainerChanged();
         if (!result) {
-            if(errorCount >= MaxErrors) {
+            if (errorCount >= MaxErrors) {
                 setErrorCount(0);
                 setDebug('Too many mistakes. Resetting.')
                 setTimeout(() => onReset(), DefaultSlowDelay);
                 return false;
             }
-            setErrorCount(c => c+1)
+            setErrorCount(c => c + 1)
             return false;
         }
         showWhatCouldHaveBeen();
@@ -133,23 +133,47 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
 
     function onBack() {
         trainer.currentBranch = trainer.currentBranch.parent;
-        if(trainer.currentBranch)
+        if (trainer.currentBranch)
             trainer.currentBranch = trainer.currentBranch.parent;
         onTrainerChanged()
+    }
+
+    function Menu() {
+        return (
+            <Row>
+                <div style={{ textAlign: 'left' }}>
+                    <button onClick={onBack}>back</button>
+                    <button onClick={doComputerMove}>compute</button>
+                    <button onClick={onSwitch}>♽</button>
+                    <button onClick={onReset}>reset</button>
+                    <button onClick={() => setShowOptions(v => !v)}>options</button>
+                </div>
+            </Row>
+        );
+    }
+
+    function MenuOptions() {
+        return (
+            <Row>
+                {showOptions &&
+                    <div style={{ textAlign: 'left' }}>
+                        Options:
+                        train past:
+                        <ToggleButton
+                            value={trainPast}
+                            onToggle={() => setTrainPast(v => !v)} />
+                        autocompute: <ToggleButton
+                            value={autoCompute}
+                            onToggle={() => setAutoCompute(v => !v)} />
+                    </div>
+                }
+            </Row>
+        )
     }
 
     return (
         <Container>
             <Col>
-                <Row>
-                    <div style={{ textAlign: 'left' }}>
-                        <button onClick={onBack}>back</button>
-                        <button onClick={doComputerMove}>compute</button>
-                        <button onClick={onSwitch}>♽</button>
-                        <button onClick={onReset}>reset</button>
-                        <button onClick={() => setShowOptions(v => !v)}>options</button>
-                    </div>
-                </Row>
                 <Row>
                     <Chessboard
                         boardOrientation={orientation}
@@ -164,23 +188,7 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
                         <div><span onClick={onShowHint}>🧠</span>: {hint}</div>
                     </div>
                 </Row>
-                <Row>
-                    {showOptions &&
-                        <div style={{ textAlign: 'left' }}>
-                            Options:
-                            train past:
-                            <ToggleButton
-                                value={trainPast}
-                                onToggle={() => setTrainPast(v => !v)} />
-                            autocompute: <ToggleButton
-                                value={autoCompute}
-                                onToggle={() => setAutoCompute(v => !v)} />
-                        </div>
-                    }
-                </Row>
             </Col>
-            <Col>
-
-            </Col>
-        </Container>);
+        </Container>)
+        ;
 }

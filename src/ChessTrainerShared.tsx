@@ -26,10 +26,6 @@ export type RootBranch = Omit<MoveBranch, 'move' | 'played' | 'correct'>
 
 export type Line = Branch[]
 
-export function branch(move: ShortMove, ...branches: MoveBranch[]): MoveBranch {
-    return { move, branches: branches || [], played: 0, correct: 0 }
-}
-
 export type Orientation = 'black' | 'white'
 
 export type MoveRepository = MoveBranch[]

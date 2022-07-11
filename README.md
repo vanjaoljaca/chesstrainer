@@ -7,6 +7,13 @@ React app for drilling chess openings.
 ## TODO
 
 sprint:
+- breadcrumbs & navigation
+- its really ugly
+- default option not selectable by ModuleBrowser
+- when playing black have to press compute to get white to start
+- when switching sides also...
+
+- method to export from phone to whatever (share)
 - back button seems to delete latest line if not saved... (fix duplicates being created)
 - add more white and black lines
 - tags
@@ -17,6 +24,7 @@ sprint:
 - "answer needed" tag
 
 recently done:
+- duplicates are crashing me
 - fix: mistake counter is abrupt
 - toggle button to show available moves (brain)
 - back on trainer view

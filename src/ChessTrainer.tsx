@@ -76,7 +76,6 @@ export class ChessTrainer {
         let branches = this._currentBranch.branches;
         if (!branches || branches.length === 0) {
             this.end = true;
-            console.log('end of line')
             return;
         }
         let candidate = branches[Math.floor(Math.random() * branches.length)]
