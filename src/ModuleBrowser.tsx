@@ -43,9 +43,14 @@ export class ModuleBrowser {
     }
 
     async loadRemoteAsync() {
+      try {
         let json = await getMoveRepositoryAsync();
         
         return json.map(m => { return { name: m, source: 'remote' } });
+      } catch (e) { 
+        console.log('failed to load remote', e);
+        return [];
+      }
     }
 
     async loadAsync(x) {
