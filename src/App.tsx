@@ -10,7 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Repository } from "./Repository";
 import { Orientation } from "./ChessTrainerShared";
 import { ModuleBrowser, Module } from "./ModuleBrowser";
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 
 function ModuleSelector({ modules, onSelected }: { modules: Module[], onSelected: (module: Module) => void }) {
   let [name, setName] = useState<string>('')
@@ -116,19 +116,32 @@ function App() {
 
   function Menu({ contextual }) {
     return (
-      <Navbar bg="light" expand="lg">
+      <Navbar bg="light" expand="lg" style={{color: '#282c34'}} variant='light'>
         <Container>
-          <Navbar.Brand href="#home">{module === null ? 'Chess Trainer' : module.name}</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Brand>♟ {module === null ? 'Chess Trainer' : module.name}</Navbar.Brand>
+          <Nav.Item onClick={onToggleEdit}>{building ? 'Play' : 'Edit'}</Nav.Item>
+          {/* <NavDropdown title="Link" id="navbarScrollingDropdown">
+            <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
+            <NavDropdown.Item href="#action4">Another action</NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item href="#action5">
+              Something else here
+            </NavDropdown.Item>
+          </NavDropdown> */}
+          <NavDropdown title="↕️🧵" id="navbarScrollingDropdown">
+            <NavDropdown.Item onClick={onLoadModule}>Load Module</NavDropdown.Item>
+            <NavDropdown.Item onClick={onSaveModule}>Save Module</NavDropdown.Item>
+            <NavDropdown.Item onClick={onOutputRepo}>Export</NavDropdown.Item>
+          </NavDropdown>
+          {/* <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <Nav.Item onClick={onLoadModule}>Load Module</Nav.Item>
               <Nav.Item onClick={onSaveModule}>Save Module</Nav.Item>
-              <Nav.Item onClick={onToggleEdit}>{building ? 'Play' : 'Edit'}</Nav.Item>
               <Nav.Item onClick={onOutputRepo}>Export</Nav.Item>
               {contextual}
             </Nav>
-          </Navbar.Collapse>
+          </Navbar.Collapse> */}
         </Container>
       </Navbar>
     )
@@ -146,25 +159,17 @@ function App() {
     return (
       <div>
         <Menu contextual={null} />
-        {building
-          ? <ChessTrainerBuilderView trainer={trainerBuilder} />
-          : <ChessTrainerView trainer={trainer} />}
+        <div className="App-content">
+          {building
+            ? <ChessTrainerBuilderView trainer={trainerBuilder} />
+            : <ChessTrainerView trainer={trainer} />}
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="App"
-      style={{
-        backgroundColor: '#282c34',
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        // font-size: calc(10px + 2vmin);
-        // color: white;
-      }}>
+    <div className="App">
       <link
         rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"

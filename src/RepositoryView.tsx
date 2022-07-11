@@ -28,8 +28,8 @@ function BranchView({ branch, level, onSelected, selected }) {
                 onClick={onClick}>
                 {branch.branches.map((b, i) => {
                     return (
-                        <div style={{marginLeft: 20}}>
-                            <BranchView key={i} branch={b} level={level+1} onSelected={onChildSelected} selected={selected}/>
+                        <div key={i} style={{marginLeft: 20}}>
+                            <BranchView branch={b} level={level+1} onSelected={onChildSelected} selected={selected}/>
                         </div>
                     )
                 })}
@@ -95,7 +95,7 @@ export function RepositoryView({ repository, onSelected }: RepositoryViewProps) 
                     //     nodeLabel={b.move.from + '->' + b.move.to}
                     //     onClick={onClick}>
                             // <div style={{marginLeft: 60}}>
-                                <BranchView branch={b} level={level} onSelected={onChildSelected} selected={selected}/>
+                                <BranchView key={i} branch={b} level={level} onSelected={onChildSelected} selected={selected}/>
                             // </div>
                     // </TreeView>
                 );

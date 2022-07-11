@@ -16,7 +16,7 @@ function Breadcrumbs({ currentBranch, onSelected }: { currentBranch: Branch, onS
     for (var b = currentBranch; b != null; b = b.parent) {
         items.push(b);
     }
-    return <p>{items.map((b, i) => <div key={i}>{JSON.stringify(b.move)}</div>)}</p>
+    return <div>{items.map((b, i) => <div key={i}>{JSON.stringify(b.move)}</div>)}</div>
 }
 
 export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
