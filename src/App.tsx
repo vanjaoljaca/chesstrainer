@@ -51,7 +51,12 @@ function App() {
   let [module, setModule] = useState<Module>(null)
 
   async function initializeJson() {
-    let remoteModules = await moduleManager.loadRemoteAsync();
+    var remoteModules = [];
+    try {
+      remoteModules = await moduleManager.loadRemoteAsync();
+    } catch (e) {
+      console.log('failed to load remote', e);
+    }
     let localModules = moduleManager.loadLocal();
     let allModules = remoteModules.concat(localModules);
     setModules(allModules);
@@ -156,8 +161,8 @@ function App() {
       return (
         <div className="App-content">
           <div>
-          <h3>♟ Chess Trainer</h3>
-          <ModuleSelector modules={modules} onSelected={onModuleSelected} />
+            <h3>♟ Chess Trainer</h3>
+            <ModuleSelector modules={modules} onSelected={onModuleSelected} />
           </div>
         </div>)
     }

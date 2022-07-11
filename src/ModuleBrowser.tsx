@@ -6,20 +6,20 @@ export type Module = {
 
 
 async function getMoveRepositoryAsync() {
-    let r = await fetch('/moverepository.json', {
+    let r = await fetch('/moverepository.txt', {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/pdf',
+        'Content-Type': 'application/json',
       },
     })
     return r.json();
   }
   
-  async function getDataAsync(fileName: string) {
-    let r = await fetch('/' + fileName, {
+  async function getDataAsync(moduleName: string) {
+    let r = await fetch('/' + moduleName + '.txt', {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/pdf',
+        'Content-Type': 'application/json',
       },
     })
     return r.json();
