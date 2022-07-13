@@ -26,22 +26,12 @@ test('renders learn react link', async () => {
     render(<TestComponent payload={wrapper} nextValue={nextValue} />);
 
     // expect initial value to be good
-    expect(screen.getByText(original)).toBeInTheDocument();
-    expect(screen.queryByText(nextValue)).not.toBeTruthy();
-
+    const btn = screen.getByText(original);
+    expect(btn).toBeInTheDocument();
     // simulate change in backend, expect no update
     // this is to ensure that we are simulating react behavior
     wrapper.data = 'intermediate'
-    expect(screen.queryByText(wrapper.data)).not.toBeTruthy();
-    const btn = screen.getByText(original);
-    expect(btn).toBeInTheDocument();
-    expect(screen.queryByText(wrapper.data)).not.toBeTruthy();
-
-    // click triggers internal 'onChanged()'
-    userEvent.click(btn);
-
-    // expect update
-    const btn2 = screen.getByText(nextValue);
-    expect(btn2).toBeInTheDocument();
-    expect(screen.queryByText(original)).not.toBeTruthy();
+    expect(btn).toHaveTextContent(original);
+    userEvent.click(btn); // triggers internal onChanged for useProxyState
+    expect(btn).toHaveTextContent(nextValue);
 });
