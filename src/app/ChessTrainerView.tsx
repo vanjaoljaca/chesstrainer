@@ -73,7 +73,7 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
     function onDrop(from, to) {
         var result: Branch;
         try {
-            result = trainer.tryMove(from, to);
+            result = trainer.tryMove({from, to});
         } catch (e) {
             setDebug(e.cause)
             return;

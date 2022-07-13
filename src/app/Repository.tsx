@@ -1,4 +1,4 @@
-import { Chess, ShortMove } from "../util/chess.js";
+import { Chess, ShortMove, Square } from "../util/chess.js";
 import { Branch, Fen, MoveBranch, moveEquals, RootBranch } from "./ChessTrainerShared";
 
 export function branch(move: ShortMove, ...branches: MoveBranch[]): MoveBranch {
@@ -24,7 +24,17 @@ export class Repository {
         this.generateFenPartial(branches);
     }
 
-    createBranch(parent: Branch, move: ShortMove): MoveBranch {
+    createBranches(parent: Branch | null, branches: [Square, Square][]) {
+        var currentBranch = parent;
+        for (let i = 0; i < branches.length; i++) {
+            let branch = branches[i];
+            currentBranch = this.createBranch(currentBranch, { from: branch[0], to: branch[1] });
+        }
+        return currentBranch;
+    }
+
+    createBranch(parent: Branch | null, move: ShortMove): MoveBranch {
+        if (parent === null) parent = this.root;
         // todo check for dupe
         let newBranch = branch(move);
         newBranch.parent = parent;
@@ -34,7 +44,7 @@ export class Repository {
     }
 
     removeBranches(branches: MoveBranch[]) {
-        for(let branch of branches) {
+        for (let branch of branches) {
             branch.parent.branches.splice(branch.parent.branches.indexOf(branch), 1);
             let fen = Repository.getFen(branch.parent)
             this.branchesFromFen[fen].splice(this.branchesFromFen[fen].indexOf(branch), 1)
@@ -74,9 +84,9 @@ export class Repository {
     dedupe() {
         let dedupe = (branch) => {
             let deduped = [];
-            for(let child of branch.branches) {
+            for (let child of branch.branches) {
                 let inDeduped = deduped.find(b => moveEquals(child.move, b.move));
-                if(inDeduped) {
+                if (inDeduped) {
                     Repository.copyInto(child, inDeduped);
                 } else {
                     dedupe(child);
@@ -124,7 +134,7 @@ export class Repository {
         Repository.parentify(root, root.branches)
     }
 
-    static loadFromLocal() : RootBranch {
+    static loadFromLocal(): RootBranch {
         let json = localStorage.getItem(Repository.REPOSITORY_KEY);
         let parsed = JSON.parse(json);
         let repository: RootBranch = parsed ? parsed : { branches: [], name: 'root' }
@@ -163,19 +173,19 @@ export class Repository {
 
     static copyInto(source: Branch, target: Branch) { // 4x 0, 1x 3 4x 0 (2 baddies)
         // assert source.move == target.move
-        if(!target.branches)
+        if (!target.branches)
             target.branches = []
 
         var toAdd = []
-        for(let branch of source.branches) {
+        for (let branch of source.branches) {
             let inTarget = target.branches.find(b => moveEquals(branch.move, b.move));
-            if(inTarget) {
+            if (inTarget) {
                 Repository.copyInto(branch, inTarget);
             } else {
                 toAdd.push(branch);
             }
         }
-        for(var i = toAdd.length - 1; i >= 0; i--) {
+        for (var i = toAdd.length - 1; i >= 0; i--) {
             target.branches.push(toAdd[i]);
         }
     }

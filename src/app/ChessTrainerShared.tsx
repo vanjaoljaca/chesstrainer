@@ -13,7 +13,7 @@ export type Branch = MoveBranch | RootBranch
 export type MoveBranch = {
     name?: string,
     move: ShortMove,
-    branches: MoveBranch[] | null
+    branches: MoveBranch[]
     played: number
     correct: number
     parent?: Branch | RootBranch
@@ -31,3 +31,5 @@ export type Orientation = 'black' | 'white'
 export type MoveRepository = MoveBranch[]
 
 export type Fen = string
+
+export type San = string

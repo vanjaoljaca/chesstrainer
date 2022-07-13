@@ -3,9 +3,10 @@ import './App.css';
 import { Chess, ChessInstance, ShortMove, Square } from "../util/chess.js";
 import { Branch, Line, Orientation, RootBranch, Fen, moveEquals } from './ChessTrainerShared';
 import { Repository } from './Repository';
+import { San } from './ChessTrainerShared';
 
 export class ChessTrainer {
-    
+
     readonly game: ChessInstance;
     repository: Repository;
     line: (Branch | RootBranch)[] = [];
@@ -25,19 +26,19 @@ export class ChessTrainer {
         this._currentBranch = this.repository.root
     }
 
-    tryMove(from: Square, to: Square) {
+    tryMove(m: San | ShortMove) {
         if (!this.isHumanMove())
             throw Error('Not human move.')
 
-        let isValid = this.game.move({from, to})
+        let move = this.game.move(m)
 
-        if(!isValid)
+        if (!move)
             throw Error('Not a valid move')
 
         this.game.undo();
 
         let branches = this._currentBranch.branches;
-        let candidate = branches.find(b => moveEquals(b.move, { from, to }));
+        let candidate = branches.find(b => moveEquals(b.move, move));
         if (candidate == null) {
             this.showHint()
             return null;
@@ -45,7 +46,7 @@ export class ChessTrainer {
         this.clearHint();
         let nextBranch = candidate;
         let nextMove = nextBranch.move;
-       
+
         this._currentBranch = nextBranch;
         this.line.push(nextBranch)
         this.currentLine.push(nextBranch)
@@ -69,7 +70,7 @@ export class ChessTrainer {
         }
 
         // let branches = this.branchesFromFen[this.game.fen()]
-        if(!this._currentBranch) {
+        if (!this._currentBranch) {
             return;
         }
 
@@ -148,13 +149,13 @@ export class ChessTrainer {
     private loadBranch(branch) {
         let line = []
         var current = branch;
-        while(current != null) { 
+        while (current != null) {
             line.push(current);
             current = current.parent;
         }
         line.reverse();
         this.reset();
-        for(let b of line) {
+        for (let b of line) {
             this.game.move(b.move);
         }
         this._currentBranch = branch;

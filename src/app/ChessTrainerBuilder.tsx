@@ -1,13 +1,11 @@
 import './App.css';
 // https://github.com/jhlywa/chess.js/blob/master/README.md
 import { Chess, ChessInstance, Move, ShortMove } from "../util/chess.js";
-import { Branch, Orientation, moveEquals, MoveBranch } from './ChessTrainerShared';
+import { Branch, Orientation, moveEquals, MoveBranch, San } from './ChessTrainerShared';
 import { Repository } from './Repository';
 
-export type San = string
-
 export class ChessTrainerBuilder {
-    
+
     readonly game: ChessInstance;
     readonly repository: Repository;
 
@@ -22,8 +20,8 @@ export class ChessTrainerBuilder {
         this._currentBranch = this.repository.root
     }
 
-    tryMove(san: San | ShortMove) {
-        let move = this.game.move(san);
+    tryMove(m: San | ShortMove) {
+        let move = this.game.move(m);
         if (!move) {
             return null;
         }
@@ -46,13 +44,13 @@ export class ChessTrainerBuilder {
     }
 
     deleteCurrent() {
-        if(this._currentBranch as MoveBranch == null)
+        if (this._currentBranch as MoveBranch == null)
             throw Error('Cant delete root');
         this.delete(this._currentBranch as MoveBranch)
     }
 
     delete(branch: Branch) {
-        if(branch as MoveBranch == null) throw Error('Delete root not implemented')
+        if (branch as MoveBranch == null) throw Error('Delete root not implemented')
         let nextBranch = branch.parent;
         this.repository.removeBranches([branch as MoveBranch]);
         this.currentBranch = nextBranch;
@@ -79,13 +77,13 @@ export class ChessTrainerBuilder {
     private loadBranch(branch: Branch) {
         let line = []
         var current = branch;
-        while(current != null) { 
+        while (current != null) {
             line.push(current);
             current = current.parent;
         }
         line.reverse();
         this.reset();
-        for(let b of line) {
+        for (let b of line) {
             this.game.move(b.move);
         }
         this._currentBranch = branch;
