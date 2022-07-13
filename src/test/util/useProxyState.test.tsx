@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from 'react';
+import React, { useState } from 'react';
 import { render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import { useProxyState } from "../../util/useProxyState";
@@ -53,7 +53,7 @@ test('blarg2', async () => {
     expect(view.result.current[0]).toBe(prop.data)
 })
 
-test('proof that use state doesnt work as desired', async () => {
+test('proof that use state doesnt work as desired. this is not surprising. i thought useState had deps but it doesnt so this is silly', async () => {
     let original = 'original';
     let prop = { data: original }
     let view = renderHook((p) => useState(() => p.data), { initialProps: prop });
