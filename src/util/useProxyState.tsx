@@ -16,7 +16,7 @@ export function useProxyState<S>(source: () => S, deps?: DependencyList): [S, ()
     const [value, setValue] = useState<S>(source);
     let onValueChanged = () => setValue(_ => source());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => onValueChanged(), [...deps])
+    useEffect(() => onValueChanged(), [source(), ...deps])
     return [value, onValueChanged];
 }
 
