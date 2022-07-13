@@ -21,7 +21,7 @@ export function useProxyState<S>(source: () => S, deps?: DependencyList): [S, ()
 }
 
 
-export function useProxyStates(sources: (() => unknown)[], deps?: DependencyList): [...unknown[], () => void] {
+export function useRefreshingState(sources: (() => unknown)[], deps?: DependencyList): [...unknown[], () => void] {
     deps = deps || [];
     var values = [];
     var setValues = [];
@@ -31,12 +31,12 @@ export function useProxyStates(sources: (() => unknown)[], deps?: DependencyList
         values.push(value);
         setValues.push(setValue);
     }
-    let onProxyChanged = () => {
+    let onRefreshStates = () => {
         for (let i = 0; i < sources.length; i++) {
-            setValues[i]((_: any) => sources[i]());
+            setValues[i]((_: any) => sources[i]());//?
         }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => onProxyChanged(), [...deps])
-    return [...values, onProxyChanged];
+    useEffect(() => onRefreshStates(), [...deps])
+    return [...values, onRefreshStates];
 }

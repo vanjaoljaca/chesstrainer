@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
-import { useProxyState } from "../../util/useProxyState";
+import { useProxyState, useRefreshingState } from "../../util/useProxyState";
 
 // the basic idea of this is when you want to use a prop as your state
 // you don't change the prop reference, you change the contents of the prop
@@ -40,7 +40,7 @@ test('blarg2', async () => {
     // with this method you don't even need to call trigger onChanged
     let original = 'original';
     let prop = { data: original }
-    let view = renderHook((p) => useProxyState(() => { return p.data }), { initialProps: prop });
+    let view = renderHook((p) => useProxyState(() => p.data), { initialProps: prop });
     expect(view.result.current[0]).toBe(original)
     prop.data = 'intermediate'
     expect(view.result.current[0]).toBe(original)
@@ -66,4 +66,23 @@ test('proof that use state doesnt work as desired. this is not surprising. i tho
     expect(view.result.current[0]).toBe(original)
     view.rerender(prop);
     expect(view.result.current[0]).toBe(original)
+})
+
+test('proxy states', async () => {
+    // with this method you don't even need to call trigger onChanged
+    // this is not that useful...
+    let prop = { d1: '1', d2: '2', d3: '3' }
+    let view = renderHook((p: any) => useRefreshingState([() => p.d1, () => p.d2, () => p.d3]), { initialProps: prop });
+
+    expect(view.result.current[0]).toBe('1')
+    expect(view.result.current[1]).toBe('2')
+    expect(view.result.current[2]).toBe('3')
+    prop.d1 = '7';
+    expect(view.result.current[0]).toBe('1')
+    view.rerender(prop)
+    expect(view.result.current[0]).toBe('1')
+    let triggerChanged = view.result.current[3]
+    triggerChanged();
+    view.rerender(prop)
+    expect(view.result.current[0]).toBe('7')
 })
