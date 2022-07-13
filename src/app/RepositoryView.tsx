@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Branch, MoveBranch, RootBranch } from './ChessTrainerShared'
 import { Repository } from "./Repository";
-import TreeView from "./TreeView";
+import TreeView from "../util/TreeView";
 
 function BranchView({ branch, level, onSelected, selected }) {
     // if(level >= 3)

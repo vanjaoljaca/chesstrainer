@@ -3,7 +3,7 @@ import './App.css';
 import { Chessboard } from "react-chessboard";
 import { ChessTrainer } from './ChessTrainer'
 import { Container, Row, Col, NavDropdown } from 'react-bootstrap';
-import { useProxyState } from "./useProxyState";
+import { useProxyState } from "../util/useProxyState";
 import ToggleButton from 'react-toggle-button'
 import { Branch } from "./ChessTrainerShared";
 

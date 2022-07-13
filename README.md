@@ -7,35 +7,54 @@ React app for drilling chess openings.
 ## TODO
 
 sprint:
+launch:
+- modules with orientation
+- delayed throbbing brain
+- fix non-start computer
+- create 2 repetoirs
+- nicer landing page
+- 'play' module on first open to demonstrate
 
+soon:
 - fix edit name/descriptiion
 - load pgp
 - breadcrumbs & navigation
-
+- popups for edit screen
+- teach mode vs training mode??
 - serializing / deserlialization method for moves to remove fluff
 - when playing black have to press compute to get white to start
 - when switching sides also...
-
 - method to export from phone to whatever (share)
 
-- add more white and black lines
+backlog:
+- linq:
+  - https://www.npmjs.com/package/linq-typescript
+  - https://www.npmjs.com/package/linq-to-typescript
+- auto start
+- arrows & markers that show lines of attack and which squares are being pressured
+- edit move comment / name / arrows / targets / notes
+- separate moves from statistics
+- denote moves that are 'critical line' for theory
+- tags for moves
+- list possible named targets below current branch
+- target branch for trainer
 - tags
 - fix: bad placement breaks game
-- max depth for trainer
+- max depth for trainer (teach mode)
 - pgn loader
-- trainer: allow move-for-computer when computer is off
 - "answer needed" tag
 
-more recently done:
+recently done:
+- scroll bar on right side
+- left side always centered
+- save repository to local button
+- duplicates are crashing me
 - modules
 - breadcrumbs view
 - add scrolling where needed temporarily (ie div belo)
 - back button seems to delete latest line if not saved... (fix duplicates being created)
 - default option not selectable by ModuleBrowser
 - its really ugly
-
-recently done:
-- duplicates are crashing me
 - fix: mistake counter is abrupt
 - toggle button to show available moves (brain)
 - back on trainer view
@@ -48,19 +67,3 @@ recently done:
 - bug: auto-play gets stuck when opposite is last move
 - fix: click edit does not preserve orientation
 - different color arrows
-
-backlog:
-- linq:
-  - https://www.npmjs.com/package/linq-typescript
-  - https://www.npmjs.com/package/linq-to-typescript
-- auto start
-- arrows & markers that show lines of attack and which squares are being pressured
-- scroll bar on right side
-- left side always centered
-- save repository to local button
-- edit move comment / name / arrows / targets / notes
-- separate moves from statistics
-- denote moves that are 'critical line' for theory
-- tags for moves
-- list possible named targets below current branch
-- target branch for trainer

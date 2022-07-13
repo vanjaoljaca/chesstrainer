@@ -1,4 +1,4 @@
-import { ShortMove, Square } from "chess.js";
+import { ShortMove, Square } from "../util/chess.js";
 
 export function move(from: Square, to: Square): ShortMove {
     return { from, to }

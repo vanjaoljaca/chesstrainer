@@ -1,6 +1,6 @@
 import './App.css';
 // https://github.com/jhlywa/chess.js/blob/master/README.md
-import { Chess, ChessInstance, ShortMove, Square } from "chess.js";
+import { Chess, ChessInstance, ShortMove, Square } from "../util/chess.js";
 import { Branch, Line, Orientation, RootBranch, Fen, moveEquals } from './ChessTrainerShared';
 import { Repository } from './Repository';
 

@@ -5,7 +5,7 @@ import { ChessTrainerBuilder } from './ChessTrainerBuilder'
 import { Container, Row, Col, NavDropdown } from 'react-bootstrap';
 import { RepositoryView } from "./RepositoryView";
 import { Branch } from "./ChessTrainerShared";
-import { useProxyState } from "./useProxyState";
+import { useProxyState } from "../util/useProxyState";
 
 type TrainerBuilderViewProps = {
     trainer: ChessTrainerBuilder
