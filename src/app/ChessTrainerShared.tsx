@@ -20,9 +20,15 @@ export type MoveBranch = {
     comment?: string
 }
 
+export type PersistedBranch = Omit<MoveBranch, 'parent' | 'branches'> & {
+    branches: PersistedBranch[]
+}
+
+export type PersistedRootBranch = Omit<PersistedBranch, 'move' | 'played' | 'correct' | 'parent'>
+
 export type FenBranch = {} /* todo */
 
-export type RootBranch = Omit<MoveBranch, 'move' | 'played' | 'correct'>
+export type RootBranch = Omit<MoveBranch, 'move' | 'played' | 'correct' | 'parent'>
 
 export type Line = Branch[]
 

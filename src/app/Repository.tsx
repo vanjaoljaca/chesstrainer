@@ -1,5 +1,5 @@
 import { Chess, ShortMove, Square } from "../util/chess.js";
-import { Branch, Fen, MoveBranch, moveEquals, RootBranch } from "./ChessTrainerShared";
+import { Branch, Fen, Line, MoveBranch, moveEquals, RootBranch } from "./ChessTrainerShared";
 
 export function branch(parent: Branch, move: ShortMove, ...branches: MoveBranch[]): MoveBranch {
     return { move, branches: branches || [], played: 0, correct: 0, parent }
@@ -127,11 +127,11 @@ export class Repository {
     }
 
     static getFen(branch: Branch) {
-        let line = [];
-        var current = branch;
+        let line: Line = [];
+        var current: Branch | null = branch;
         while (current != null) {
             line.push(current);
-            current = 'parent' in current ? current.parent : null;
+            current = current as MoveBranch ? current.parent : null;
         }
         let game = Chess();
         for (var i = line.length - 1; i >= 0; i--) {

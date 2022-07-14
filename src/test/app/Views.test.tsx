@@ -35,4 +35,5 @@ test('mod sel', () => {
     ];
     let handleSelected = jest.fn();
     render(<ModuleSelector modules={modules} onSelected={handleSelected} />)
+    
 })
