@@ -1,9 +1,11 @@
+import _ from 'lodash';
+import { Orientation } from './ChessTrainerShared';
 
 export type Module = {
   name: string,
   source: 'remote' | 'local' | 'new'
+  orientation: Orientation
 }
-
 
 async function getMoveRepositoryAsync() {
   let r = await fetch('/moverepository.txt', {
@@ -33,27 +35,41 @@ export class ModuleBrowser {
 
   modules: string[] = [];
 
-  loadLocalNames(): string[] {
-    return JSON.parse(localStorage.getItem(ModuleBrowser.ModuleBrowser_KEY)) || [];
+  loadLocalNames(): { white: [], black: [] } {
+    let raw = localStorage.getItem(ModuleBrowser.ModuleBrowser_KEY)
+    let loaded = raw ? JSON.parse(raw) : {
+      white: [],
+      black: []
+    };
+    if (loaded) {
+      // upgrade version?
+      if (loaded.white === undefined) {
+        return { white: loaded, black: [] };
+      }
+    }
+    return loaded;
   }
 
   loadLocal(): Module[] {
     let jsons = this.loadLocalNames();
-    return jsons.map(m => { return { name: m, source: 'local' } });
+    const source = 'local';
+    return _.concat(
+      jsons.white.map(name => ({ name, source, orientation: 'white' })),
+      jsons.black.map(name => ({ name, source, orientation: 'black' })));
   }
 
   async loadRemoteAsync() {
     try {
-      let json = await getMoveRepositoryAsync();
+      let json = await getMoveRepositoryAsync(); // todo
 
-      return json.map(m => { return { name: m, source: 'remote' } });
+      return json.map(m => { return { name: m, source: 'remote', orientation: 'black' } });
     } catch (e) {
       console.log('failed to load remote', e);
-      return [];
+      return [] as Module[];
     }
   }
 
-  async loadAsync(x) {
+  async loadAsync(x: Module) {
     if (x.source === 'local') {
       return this.loadLocalRespository(x.name);
     }
@@ -61,17 +77,22 @@ export class ModuleBrowser {
   }
 
   loadLocalRespository(name: string) {
-    let raw = localStorage.getItem(ModuleBrowser.ModuleBrowser_PREFIX + name) //?
+    let raw = localStorage.getItem(ModuleBrowser.ModuleBrowser_PREFIX + name)
+    if (raw === null) {
+      throw new Error('not found');
+    }
     let jsons = JSON.parse(raw);
-    return jsons; //?
+    return jsons;
   }
 
-  saveLocalRepository(name: string, json: string) {
+  saveLocalRepository(name: string, orientation: Orientation, json: string) {
     localStorage.setItem(ModuleBrowser.ModuleBrowser_PREFIX + name, json);
     let local = this.loadLocalNames();
-    if (local.indexOf(name) === -1)
-      local.push(name);
-    localStorage.setItem(ModuleBrowser.ModuleBrowser_KEY, JSON.stringify(local));
+    let collection = local[orientation] as string[];
+    if (collection.indexOf(name) === -1) {
+      collection.push(name);
+      localStorage.setItem(ModuleBrowser.ModuleBrowser_KEY, JSON.stringify(local));
+    }
   }
 
   async loadRemoteRepositoryAsync(name: string) {

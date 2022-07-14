@@ -1,7 +1,7 @@
 import './App.css';
 // https://github.com/jhlywa/chess.js/blob/master/README.md
 import { Chess, ChessInstance, ShortMove, Square } from "../util/chess.js";
-import { Branch, Line, Orientation, RootBranch, Fen, moveEquals } from './ChessTrainerShared';
+import { Branch, Line, Orientation, RootBranch, Fen, moveEquals, MoveBranch } from './ChessTrainerShared';
 import { Repository } from './Repository';
 import { San } from './ChessTrainerShared';
 
@@ -11,15 +11,14 @@ export class ChessTrainer {
     repository: Repository;
     line: (Branch | RootBranch)[] = [];
     currentLine: Branch[] = []
-    private _currentBranch: Branch | RootBranch = null
+    private _currentBranch: Branch
     end: boolean = false
     orientation: Orientation = 'black'
     arrows: [Square, Square][] = []
     buildLine: ShortMove[] = []
-    branchesFromFen: Map<Fen, Branch[]>
-    hint: string
+    hint: string | null = null
 
-    constructor(repository: Repository, orientation?: Orientation) {
+    constructor(repository: Repository, orientation: Orientation) {
         this.game = new Chess();
         this.repository = repository;
         this.orientation = orientation;
@@ -32,13 +31,13 @@ export class ChessTrainer {
 
         let move = this.game.move(m)
 
-        if (!move)
+        if (move as ShortMove === null)
             throw Error('Not a valid move')
 
         this.game.undo();
 
         let branches = this._currentBranch.branches;
-        let candidate = branches.find(b => moveEquals(b.move, move));
+        let candidate = branches.find(b => moveEquals(b.move, move as ShortMove));
         if (candidate == null) {
             this.showHint()
             return null;
@@ -56,7 +55,7 @@ export class ChessTrainer {
 
     showHint() {
         this.arrows = this._currentBranch.branches.map(b => [b.move.from, b.move.to]);
-        this.hint = this._currentBranch.comment
+        this.hint = this._currentBranch.comment || null
     }
 
     clearHint() {
@@ -110,9 +109,9 @@ export class ChessTrainer {
     }
 
     getRandomLine(repository: RootBranch): Line {
-        let line = [];
+        let line: Line = [];
         var _currentBranches = repository.branches;
-        var current = null;
+        var current;
         while (_currentBranches != null && _currentBranches.length !== 0) {
             let i = Math.floor(Math.random() * _currentBranches.length);
             current = _currentBranches[i];
@@ -147,7 +146,7 @@ export class ChessTrainer {
     }
 
     private loadBranch(branch) {
-        let line = []
+        let line: MoveBranch[] = [];
         var current = branch;
         while (current != null) {
             line.push(current);

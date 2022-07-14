@@ -1,21 +1,21 @@
 # Chess Trainer
 
-React app for drilling chess openings. 
+React app for drilling chess openings.
 
 ### yarn start
 
 ## TODO
 
-sprint:
-launch:
+sprint: launch:
+
 - modules with orientation
 - delayed throbbing brain
-- fix non-start computer
 - create 2 repetoirs
 - nicer landing page
 - 'play' module on first open to demonstrate
 
 soon:
+
 - fix edit name/descriptiion
 - load pgp
 - breadcrumbs & navigation
@@ -27,11 +27,13 @@ soon:
 - method to export from phone to whatever (share)
 
 backlog:
+
 - linq:
   - https://www.npmjs.com/package/linq-typescript
   - https://www.npmjs.com/package/linq-to-typescript
 - auto start
-- arrows & markers that show lines of attack and which squares are being pressured
+- arrows & markers that show lines of attack and which squares are being
+  pressured
 - edit move comment / name / arrows / targets / notes
 - separate moves from statistics
 - denote moves that are 'critical line' for theory
@@ -45,6 +47,8 @@ backlog:
 - "answer needed" tag
 
 recently done:
+
+- fix non-start computer
 - scroll bar on right side
 - left side always centered
 - save repository to local button
@@ -52,7 +56,8 @@ recently done:
 - modules
 - breadcrumbs view
 - add scrolling where needed temporarily (ie div belo)
-- back button seems to delete latest line if not saved... (fix duplicates being created)
+- back button seems to delete latest line if not saved... (fix duplicates being
+  created)
 - default option not selectable by ModuleBrowser
 - its really ugly
 - fix: mistake counter is abrupt

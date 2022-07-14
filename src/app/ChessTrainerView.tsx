@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import './App.css';
-import { Chessboard } from "react-chessboard";
+import { Chessboard, Square } from "react-chessboard";
 import { ChessTrainer } from './ChessTrainer'
 import { Container, Row, Col, NavDropdown } from 'react-bootstrap';
 import { useProxyState } from "../util/useProxyState";
@@ -20,9 +20,9 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
     const AltOptionArrowColor = 'Silver'
     const MistakeArrowColor = 'SandyBrown'
 
-    const [debug, setDebug] = useState(null);
-    const [fen, setFen] = useState(() => trainer.fen());
-    const [arrows, setArrows] = useState([]);
+    const [debug, setDebug] = useState('');
+    const [fen, setFen] = useState<string>(() => trainer.fen());
+    const [arrows, setArrows] = useState<[Square, Square][]>([]);
     const [arrowColor, setArrowColor] = useState(MistakeArrowColor);
     const [orientation, onOrientationChanged] = useProxyState(() => trainer.orientation);
     const [hint, onHintChanged] = useProxyState(() => trainer.hint);
@@ -31,6 +31,14 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
     const [autoCompute, setAutoCompute] = useState(true)
     const [showOptions, setShowOptions] = useState(false)
     const [errorCount, setErrorCount] = useState(0);
+
+    useEffect(() => {
+        if (!trainer) return;
+        if (trainer.isComputerMove())
+            trainer.doComputerMove();
+        onTrainerChanged();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [trainer, trainer.orientation]);
 
     function onTrainerChanged() {
         setDebug(s => trainer.isDone() ? 'done 🖕' : '...');
@@ -57,7 +65,8 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
         if (!trainPast) return;
         // todo: toggle for this feature
         // todo: push this down into trainer?
-        let altOptions = trainer.currentBranch.parent.branches
+        if (trainer.currentBranch.parent === undefined) return;
+        let altOptions: [Square, Square][] = trainer.currentBranch.parent.branches
             .filter(b => b !== trainer.currentBranch)
             .map(b => [b.move.from, b.move.to])
         if (altOptions.length > 0) {
@@ -70,13 +79,13 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
         }
     }
 
-    function onDrop(from, to) {
-        var result: Branch;
+    function onDrop(from, to, _piece): boolean {
+        let result;
         try {
-            result = trainer.tryMove({from, to});
+            result = trainer.tryMove({ from, to });
         } catch (e) {
-            setDebug(e.cause)
-            return;
+            setDebug(e as string)
+            return false;;
         }
 
         onTrainerChanged();
@@ -132,9 +141,9 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
     }
 
     function onBack() {
-        if (trainer.currentBranch)
+        if (trainer.currentBranch.parent)
             trainer.currentBranch = trainer.currentBranch.parent;
-        if (trainer.currentBranch)
+        if (trainer.currentBranch.parent)
             trainer.currentBranch = trainer.currentBranch.parent;
         onTrainerChanged()
     }

@@ -81,7 +81,7 @@ test('proxy states', async () => {
     expect(view.result.current[0]).toBe('1')
     view.rerender(prop)
     expect(view.result.current[0]).toBe('1')
-    let triggerChanged = view.result.current[3]
+    let triggerChanged = view.result.current[3] as (() => void)
     triggerChanged();
     view.rerender(prop)
     expect(view.result.current[0]).toBe('7')

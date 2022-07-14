@@ -11,44 +11,21 @@ import { Repository } from "./Repository";
 import { Orientation } from "./ChessTrainerShared";
 import { ModuleBrowser, Module } from "./ModuleBrowser";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { ModuleSelector } from "./ModuleSelector";
 
-function ModuleSelector({ modules, onSelected }: { modules: Module[], onSelected: (module: Module) => void }) {
-  let [name, setName] = useState<string>('')
-  let [module, setModule] = useState<Module>(modules[0]);
+function AppSupplier() {
 
-  function handleSelected(m) {
-    onSelected(m);
-  }
-
-  return (
-    <div>
-      <p>Select a module</p>
-      <div>
-        <select onChange={o => setModule(JSON.parse(o.target.value))}>
-          {modules.map(o =>
-            <option key={o.source + o.name} value={JSON.stringify(o)}>{o.source} {o.name}</option>
-          )}
-        </select>
-
-        <button onClick={() => handleSelected(module)}>Load</button>
-      </div>
-      <div>
-        <label>name</label>
-        <input type='text' onChange={e => setName(e.target.value)} value={name}></input>
-        <button onClick={() => handleSelected({ source: 'new', name })}>New</button>
-      </div>
-    </div>);
 }
 
 function App() {
   let [playing, setPlaying] = useState(true);
   let [building, setBuilding] = useState(false)
-  let [repository, setRepository] = useState<Repository>(null)
-  let [trainerBuilder, setTrainerBuilder] = useState<ChessTrainerBuilder>(null)
-  let [trainer, setTrainer] = useState<ChessTrainer>(null)
+  let [repository, setRepository] = useState<Repository | null>(null)
+  let [trainerBuilder, setTrainerBuilder] = useState<ChessTrainerBuilder | null>(null)
+  let [trainer, setTrainer] = useState<ChessTrainer | null>(null)
   let [moduleManager, _] = useState<ModuleBrowser>(() => new ModuleBrowser())
   let [modules, setModules] = useState<Module[]>([]);
-  let [module, setModule] = useState<Module>(null)
+  let [module, setModule] = useState<Module | null>(null)
 
   async function initializeJson() {
     var remoteModules = [];
@@ -81,7 +58,10 @@ function App() {
   }
 
   function onSaveModule() {
-    moduleManager.saveLocalRepository(module.name, repository.json());
+    if (!trainer || !module || !repository)
+      throw new Error('not ready')
+
+    moduleManager.saveLocalRepository(module.name, trainer.orientation, repository.json());
   }
 
   function onModuleSelected(module: Module) {
