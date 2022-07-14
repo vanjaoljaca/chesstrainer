@@ -16,7 +16,7 @@ export type MoveBranch = {
     branches: MoveBranch[]
     played: number
     correct: number
-    parent?: Branch | RootBranch
+    parent: Branch
     comment?: string
 }
 

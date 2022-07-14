@@ -1,7 +1,7 @@
 import './App.css';
 // https://github.com/jhlywa/chess.js/blob/master/README.md
 import { Chess, ChessInstance, Move, ShortMove } from "../util/chess.js";
-import { Branch, Orientation, moveEquals, MoveBranch, San } from './ChessTrainerShared';
+import { Branch, Orientation, moveEquals, MoveBranch, San, Line } from './ChessTrainerShared';
 import { Repository } from './Repository';
 
 export class ChessTrainerBuilder {
@@ -10,10 +10,10 @@ export class ChessTrainerBuilder {
     readonly repository: Repository;
 
     // private buildLine: MoveBranch[] = []
-    private _currentBranch: Branch = null
-    orientation: Orientation = 'black' // todo: private, default white?
+    private _currentBranch: Branch
+    orientation: Orientation
 
-    constructor(repository: Repository, orientation?: Orientation) {
+    constructor(repository: Repository, orientation: Orientation) {
         this.game = new Chess();
         this.repository = repository;
         this.orientation = orientation;
@@ -52,8 +52,9 @@ export class ChessTrainerBuilder {
     delete(branch: Branch) {
         if (branch as MoveBranch == null) throw Error('Delete root not implemented')
         let nextBranch = branch.parent;
+        if (nextBranch as Branch === null) throw Error('Delete root not implemented')
         this.repository.removeBranches([branch as MoveBranch]);
-        this.currentBranch = nextBranch;
+        this.currentBranch = nextBranch as Branch;
     }
 
     get fen() {
@@ -75,8 +76,8 @@ export class ChessTrainerBuilder {
     }
 
     private loadBranch(branch: Branch) {
-        let line = []
-        var current = branch;
+        let line: Line = []
+        var current: Branch | undefined = branch;
         while (current != null) {
             line.push(current);
             current = current.parent;
@@ -84,7 +85,8 @@ export class ChessTrainerBuilder {
         line.reverse();
         this.reset();
         for (let b of line) {
-            this.game.move(b.move);
+            if (b as MoveBranch)
+                this.game.move((b as MoveBranch).move);
         }
         this._currentBranch = branch;
     }

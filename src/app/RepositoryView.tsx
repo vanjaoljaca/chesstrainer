@@ -10,17 +10,17 @@ function BranchView({ branch, level, onSelected, selected }) {
 
     function onClick(a) {
         // setCollapsed(c => !c);
-        onSelected && onSelected({branch, level})
+        onSelected && onSelected({ branch, level })
     }
 
-    function onChildSelected({branch, level}) {
-        onSelected && onSelected({branch, level});
+    function onChildSelected({ branch, level }) {
+        onSelected && onSelected({ branch, level });
     }
 
     return (
         <div>
             {/* <input type='checkbox'>{branch.name} {branch.move.from} {branch.move.to}</input> */}
-            <TreeView 
+            <TreeView
                 nodeLabel={(
                     level + ' ' + branch.move.from + '->' + branch.move.to + (branch === selected ? ' * ' : ' ') + (branch.name ? branch.name : '')
                 )}
@@ -28,8 +28,8 @@ function BranchView({ branch, level, onSelected, selected }) {
                 onClick={onClick}>
                 {branch.branches.map((b, i) => {
                     return (
-                        <div key={i} style={{marginLeft: 20}}>
-                            <BranchView branch={b} level={level+1} onSelected={onChildSelected} selected={selected}/>
+                        <div key={i} style={{ marginLeft: 20 }}>
+                            <BranchView branch={b} level={level + 1} onSelected={onChildSelected} selected={selected} />
                         </div>
                     )
                 })}
@@ -38,12 +38,12 @@ function BranchView({ branch, level, onSelected, selected }) {
     );
 }
 
-function findParent(branch: MoveBranch, level: number) {
+function findParent(branch: MoveBranch | null, level: number): Branch | null {
     var current = branch;
-    if(current == null) return null;
-    for(var i = 0; i < level; i++) {
-        if(current.parent as MoveBranch == null)
-            return current.parent;
+    if (current === null) return null;
+    for (var i = 0; i < level; i++) {
+        if (current.parent as MoveBranch == null)
+            return current.parent as Branch;
         current = current.parent as MoveBranch;
     }
     return current;
@@ -52,26 +52,26 @@ function findParent(branch: MoveBranch, level: number) {
 function findDepth(branch: Branch) {
     var current = branch;
     var i = 0;
-    while((current as RootBranch == null)) {
+    while ((current as RootBranch == null)) {
         i++;
-        current = (current as MoveBranch).parent;
+        current = (current as MoveBranch).parent as MoveBranch;
     }
     return i;
 }
 
 type RepositoryViewProps = {
-    repository: Repository, 
+    repository: Repository,
     onSelected: (branch: Branch) => void
 }
 
 export function RepositoryView({ repository, onSelected }: RepositoryViewProps) {
-    let [selected, setSelected] = useState(null)
+    let [selected, setSelected] = useState<MoveBranch | null>(null)
     let [level, setLevel] = useState(0);
 
-    if(!repository)
+    if (!repository)
         return <p>null repo</p>
 
-    function onChildSelected({branch, level}) {
+    function onChildSelected({ branch, level }) {
         setSelected(branch);
         setLevel(findDepth(branch))
         // setLevel(level)
@@ -80,12 +80,12 @@ export function RepositoryView({ repository, onSelected }: RepositoryViewProps) 
 
     let parentLevel = findParent(selected, 3);
 
-    let root = true || selected == null || parentLevel == null
+    let root = true || selected === null || parentLevel as Branch === null
         ? repository.root.branches
-        : parentLevel.branches;
-    
+        : (parentLevel as Branch).branches;
+
     return (
-        <div style={{border: 'solid', textAlign: 'left', overflowX: 'auto'}}>
+        <div style={{ border: 'solid', textAlign: 'left', overflowX: 'auto' }}>
             <h3>Moves</h3>
             {/* <p>root is repository: {root === repository.root.branches ? 'true' : 'false'}</p>
             <p>findParentLevel: {parentLevel != null && 'move' in parentLevel ? parentLevel.move.from : 'null'}</p> */}
@@ -94,9 +94,9 @@ export function RepositoryView({ repository, onSelected }: RepositoryViewProps) 
                     // <TreeView key={i} branch={b}
                     //     nodeLabel={b.move.from + '->' + b.move.to}
                     //     onClick={onClick}>
-                            // <div style={{marginLeft: 60}}>
-                                <BranchView key={i} branch={b} level={level} onSelected={onChildSelected} selected={selected}/>
-                            // </div>
+                    // <div style={{marginLeft: 60}}>
+                    <BranchView key={i} branch={b} level={level} onSelected={onChildSelected} selected={selected} />
+                    // </div>
                     // </TreeView>
                 );
             })}

@@ -1,8 +1,8 @@
 import { Chess, ShortMove, Square } from "../util/chess.js";
 import { Branch, Fen, MoveBranch, moveEquals, RootBranch } from "./ChessTrainerShared";
 
-export function branch(move: ShortMove, ...branches: MoveBranch[]): MoveBranch {
-    return { move, branches: branches || [], played: 0, correct: 0 }
+export function branch(parent: Branch, move: ShortMove, ...branches: MoveBranch[]): MoveBranch {
+    return { move, branches: branches || [], played: 0, correct: 0, parent }
 }
 
 export class Repository {
@@ -36,8 +36,7 @@ export class Repository {
     createBranch(parent: Branch | null, move: ShortMove): MoveBranch {
         if (parent === null) parent = this.root;
         // todo check for dupe
-        let newBranch = branch(move);
-        newBranch.parent = parent;
+        let newBranch = branch(parent, move);
         parent.branches.push(newBranch);
         this.generateFenPartial([newBranch]);
         return newBranch;
@@ -82,8 +81,8 @@ export class Repository {
     }
 
     dedupe() {
-        let dedupe = (branch) => {
-            let deduped = [];
+        let dedupe = (branch: Branch) => {
+            let deduped: MoveBranch[] = [];
             for (let child of branch.branches) {
                 let inDeduped = deduped.find(b => moveEquals(child.move, b.move));
                 if (inDeduped) {
@@ -106,41 +105,11 @@ export class Repository {
         this.generateFen();
     }
 
-    mergeFromLocal() {
-        let json = localStorage.getItem(Repository.REPOSITORY_KEY);
-        let parsed = JSON.parse(json);
-        let repository: RootBranch = parsed ? parsed : { branches: [], name: 'root' }
-        this.merge(repository);
-    }
-
-    clearRepository() {
-        localStorage.setItem(Repository.REPOSITORY_KEY, JSON.stringify({
-            name: 'root',
-            branches: []
-        }));
-        this.root = Repository.loadFromLocal()
-    }
-
     json() {
         Repository.deparentify(this.root.branches);
         let json = JSON.stringify(this.root);
         Repository.parentify(this.root, this.root.branches)
         return json;
-    }
-
-    static saveToLocal(root: RootBranch) {
-        Repository.deparentify(root.branches);
-        localStorage.setItem(Repository.REPOSITORY_KEY, JSON.stringify(root));
-        Repository.parentify(root, root.branches)
-    }
-
-    static loadFromLocal(): RootBranch {
-        let json = localStorage.getItem(Repository.REPOSITORY_KEY);
-        let parsed = JSON.parse(json);
-        let repository: RootBranch = parsed ? parsed : { branches: [], name: 'root' }
-        Repository.parentify(repository, repository.branches)
-        // this.loadFen(repository.branches)
-        return repository
     }
 
     static deparentify(branches: MoveBranch[]) {

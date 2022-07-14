@@ -8,7 +8,7 @@ React app for drilling chess openings.
 
 sprint: launch:
 
-- modules with orientation
+- persistence type & types clean up & ts strict
 - delayed throbbing brain
 - create 2 repetoirs
 - nicer landing page
@@ -48,6 +48,7 @@ backlog:
 
 recently done:
 
+- modules with orientation
 - fix non-start computer
 - scroll bar on right side
 - left side always centered

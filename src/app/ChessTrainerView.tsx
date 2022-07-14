@@ -5,7 +5,6 @@ import { ChessTrainer } from './ChessTrainer'
 import { Container, Row, Col, NavDropdown } from 'react-bootstrap';
 import { useProxyState } from "../util/useProxyState";
 import ToggleButton from 'react-toggle-button'
-import { Branch } from "./ChessTrainerShared";
 
 type TrainerViewProps = {
     trainer: ChessTrainer

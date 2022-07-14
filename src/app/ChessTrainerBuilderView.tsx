@@ -12,13 +12,13 @@ type TrainerBuilderViewProps = {
 }
 
 function Breadcrumbs({ currentBranch, onSelected }: { currentBranch: Branch, onSelected: (branch: Branch) => void }) {
-    let items = [];
-    for (var b = currentBranch; b != null; b = b.parent) {
+    let items: any[] = [];
+    for (var b: any = currentBranch; b !== null; b = b.parent) {
         items.push(b);
     }
     return (
         <div style={{ display: 'flex', overflowY: 'scroll' }}>
-            {items.map((b, i) => 
+            {items.map((b, i) =>
                 <div key={i}
                     style={{ margin: '2px', fontSize: '12px' }}>
                     {b.move && (b.move.san ? b.move.san : (b.move.from + '-' + b.move.to))}
@@ -56,7 +56,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     }
 
     function onBack() {
-        if(trainer.currentBranch && trainer.currentBranch.parent)
+        if (trainer.currentBranch && trainer.currentBranch.parent)
             trainer.currentBranch = trainer.currentBranch.parent;
         onTrainerChanged()
     }
@@ -118,7 +118,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
                 <NavDropdown.Item onClick={onSwitch}>♽</NavDropdown.Item>
                 <NavDropdown.Item onClick={() => onTrainerChanged()}>refresh</NavDropdown.Item>
             </NavDropdown>
-            )
+        )
     }
 
     return (

@@ -13,10 +13,6 @@ import { ModuleBrowser, Module } from "./ModuleBrowser";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { ModuleSelector } from "./ModuleSelector";
 
-function AppSupplier() {
-
-}
-
 function App() {
   let [playing, setPlaying] = useState(true);
   let [building, setBuilding] = useState(false)
@@ -28,11 +24,12 @@ function App() {
   let [module, setModule] = useState<Module | null>(null)
 
   async function initializeJson() {
-    var remoteModules = [];
+    let remoteModules: Module[];
     try {
       remoteModules = await moduleManager.loadRemoteAsync();
     } catch (e) {
       console.log('failed to load remote', e);
+      remoteModules = [];
     }
     let localModules = moduleManager.loadLocal();
     let allModules = remoteModules.concat(localModules);
@@ -79,14 +76,20 @@ function App() {
   }, [])
 
   function onOutputRepo() {
+    if (!repository) throw new Error('no repository')
     repository.dedupe();
     let json = repository.json();
     navigator.clipboard.writeText(json)
   }
 
   function onToggleEdit() {
+    if (!trainer) throw new Error('no trainer')
+    if (!trainerBuilder) throw new Error('no trainer builder')
+
     if (playing) {
       setTrainerBuilder(tb => {
+        if (!trainer) throw new Error('no trainer')
+        if (!tb) throw new Error('no trainer builder')
         tb.currentBranch = trainer.currentBranch
         tb.orientation = trainer.orientation
         return tb
@@ -94,6 +97,8 @@ function App() {
     } else {
       trainer.currentBranch = trainerBuilder.currentBranch;
       setTrainer(t => {
+        if (!t) throw new Error('no trainer')
+        if (!trainerBuilder) throw new Error('no trainer builder')
         t.currentBranch = trainerBuilder.currentBranch
         t.orientation = trainerBuilder.orientation
         return t
@@ -137,6 +142,9 @@ function App() {
   }
 
   function ViewContent() {
+    if (!trainerBuilder) throw new Error('no trainer builder')
+    if (!trainer) throw new Error('no trainer')
+
     if (module == null) {
       return (
         <div className="App-content">
