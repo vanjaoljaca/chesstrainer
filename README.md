@@ -23,7 +23,7 @@ soon:
 - breadcrumbs & navigation
 - popups for edit screen
 - teach mode vs training mode??
-- serializing / deserlialization method for moves to remove fluff
+- serializing / deserlialization method for moves to remove fluff (part 2)
 - when playing black have to press compute to get white to start
 - when switching sides also...
 - method to export from phone to whatever (share)
@@ -48,6 +48,7 @@ backlog:
 - "answer needed" tag
 
 recently done:
+- serializing / deserlialization method for moves to remove fluff (part 1)
 - edit mode: selecting moves is broken
 - edit mode: get breadcrumsb working!
 - lodash
