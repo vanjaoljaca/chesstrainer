@@ -7,7 +7,7 @@ React app for drilling chess openings.
 ## TODO
 
 sprint: launch:
-
+- https://usehooks-ts.com/react-hook/use-fetch
 - persistence type & types clean up & ts strict
 - delayed throbbing brain
 - create 2 repetoirs
@@ -47,7 +47,7 @@ backlog:
 - "answer needed" tag
 
 recently done:
-
+- lodash
 - modules with orientation
 - fix non-start computer
 - scroll bar on right side

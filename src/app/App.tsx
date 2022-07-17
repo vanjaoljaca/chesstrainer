@@ -58,7 +58,8 @@ function App() {
     if (!trainer || !module || !repository)
       throw new Error('not ready')
 
-    moduleManager.saveLocalRepository(module.name, trainer.orientation, repository.json());
+    let json = JSON.stringify(repository.persistable());
+    moduleManager.saveLocalRepository(module.name, trainer.orientation, json);
   }
 
   function onModuleSelected(module: Module) {
@@ -73,12 +74,12 @@ function App() {
 
   useEffect(() => {
     initializeJson()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function onOutputRepo() {
     if (!repository) throw new Error('no repository')
-    repository.dedupe();
-    let json = repository.json();
+    let json = JSON.stringify(repository.persistable());
     navigator.clipboard.writeText(json)
   }
 
@@ -142,8 +143,6 @@ function App() {
   }
 
   function ViewContent() {
-    if (!trainerBuilder) throw new Error('no trainer builder')
-    if (!trainer) throw new Error('no trainer')
 
     if (module == null) {
       return (
@@ -154,6 +153,8 @@ function App() {
           </div>
         </div>)
     }
+
+    if (!trainerBuilder || !trainer) throw new Error('trainerBuilder or trainer missing')
 
     return (
       <div>

@@ -17,16 +17,19 @@ import { ReactNodeLike, Requireable } from 'prop-types';
 //   collapsed: boolean = false
 // }
 
-class TreeView extends React.PureComponent<any, any> {
-  propTypes: {
-    collapsed: Requireable<boolean>,
-    defaultCollapsed: Requireable<boolean>,
-    nodeLabel: Requireable<ReactNodeLike>,
-    className: Requireable<string>,
-    itemClassName: Requireable<string>,
-    childrenClassName: Requireable<string>,
-    treeViewClassName: Requireable<string>,
-  }
+type TreeViewProps = {
+  collapsed?: boolean,
+  defaultCollapsed?: boolean,
+  nodeLabel: ReactNodeLike,
+  className?: string,
+  itemClassName?: string,
+  childrenClassName?: string,
+  treeViewClassName?: string,
+  children: any[],
+  onClick?: any
+}
+
+class TreeView extends React.PureComponent<TreeViewProps, any> {
 
   constructor(props) {
     super(props);

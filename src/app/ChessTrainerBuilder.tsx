@@ -51,7 +51,7 @@ export class ChessTrainerBuilder {
 
     delete(branch: Branch) {
         if (branch as MoveBranch == null) throw Error('Delete root not implemented')
-        let nextBranch = branch.parent;
+        let nextBranch = (branch as MoveBranch).parent;
         if (nextBranch as Branch === null) throw Error('Delete root not implemented')
         this.repository.removeBranches([branch as MoveBranch]);
         this.currentBranch = nextBranch as Branch;
@@ -78,9 +78,9 @@ export class ChessTrainerBuilder {
     private loadBranch(branch: Branch) {
         let line: Line = []
         var current: Branch | undefined = branch;
-        while (current != null) {
+        while (current !== undefined) {
             line.push(current);
-            current = current.parent;
+            current = (current as MoveBranch).parent;
         }
         line.reverse();
         this.reset();

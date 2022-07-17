@@ -4,7 +4,7 @@ import { Chessboard, Square } from "react-chessboard";
 import { ChessTrainerBuilder } from './ChessTrainerBuilder'
 import { Container, Row, Col, NavDropdown } from 'react-bootstrap';
 import { RepositoryView } from "./RepositoryView";
-import { Branch } from "./ChessTrainerShared";
+import { Branch, MoveBranch } from "./ChessTrainerShared";
 import { useProxyState } from "../util/useProxyState";
 
 type TrainerBuilderViewProps = {
@@ -56,8 +56,8 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
     }
 
     function onBack() {
-        if (trainer.currentBranch && trainer.currentBranch.parent)
-            trainer.currentBranch = trainer.currentBranch.parent;
+        if (trainer.currentBranch as MoveBranch)
+            trainer.currentBranch = (trainer.currentBranch as MoveBranch).parent;
         onTrainerChanged()
     }
 

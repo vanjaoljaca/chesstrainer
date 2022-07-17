@@ -5,6 +5,7 @@ import { ChessTrainer } from './ChessTrainer'
 import { Container, Row, Col, NavDropdown } from 'react-bootstrap';
 import { useProxyState } from "../util/useProxyState";
 import ToggleButton from 'react-toggle-button'
+import { MoveBranch } from "./ChessTrainerShared";
 
 type TrainerViewProps = {
     trainer: ChessTrainer
@@ -64,8 +65,8 @@ export function ChessTrainerView({ trainer }: TrainerViewProps) {
         if (!trainPast) return;
         // todo: toggle for this feature
         // todo: push this down into trainer?
-        if (trainer.currentBranch.parent === undefined) return;
-        let altOptions: [Square, Square][] = trainer.currentBranch.parent.branches
+        if (trainer.currentBranch as MoveBranch === null) return;
+        let altOptions: [Square, Square][] = (trainer.currentBranch as MoveBranch).parent.branches
             .filter(b => b !== trainer.currentBranch)
             .map(b => [b.move.from, b.move.to])
         if (altOptions.length > 0) {

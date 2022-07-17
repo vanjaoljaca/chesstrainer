@@ -1,5 +1,6 @@
 import { Chess, ShortMove, Square } from "../util/chess.js";
-import { Branch, Fen, Line, MoveBranch, moveEquals, RootBranch } from "./ChessTrainerShared";
+import { Branch, Fen, Line, MoveBranch, moveEquals, Persistable, RootBranch } from "./ChessTrainerShared";
+import _ from "lodash";
 
 export function branch(parent: Branch, move: ShortMove, ...branches: MoveBranch[]): MoveBranch {
     return { move, branches: branches || [], played: 0, correct: 0, parent }
@@ -13,7 +14,7 @@ export class Repository {
     branchesFromFen: Map<Fen, Branch[]>
 
     constructor() {
-        this.root = { branches: [], name: 'root' }
+        this.root = { branches: [], name: 'root', parent: undefined }
         this.branchesFromFen = new Map<Fen, Branch[]>()
     }
 
@@ -72,7 +73,7 @@ export class Repository {
         // todo fenFromBranch
         // todo: fenId
         for (let branch of branches) {
-            if (!('parent' in branch)) continue;
+            if (branch.parent === undefined) continue;
             let fen = Repository.getFen(branch.parent);
             if (this.branchesFromFen[fen] === undefined)
                 this.branchesFromFen[fen] = []
@@ -96,56 +97,46 @@ export class Repository {
         }
 
         dedupe(this.root);
-        Repository.parentify(this.root, this.root.branches)
     }
 
     merge(repository: RootBranch) { // classical 8 e7 f6
         Repository.copyInto(repository, this.root);
-        Repository.parentify(this.root, repository.branches)
         this.generateFen();
     }
 
-    json() {
-        Repository.deparentify(this.root.branches);
-        let json = JSON.stringify(this.root);
-        Repository.parentify(this.root, this.root.branches)
-        return json;
+    persistable(): Persistable<RootBranch> {
+        return Repository.persistable(this.root);
     }
 
-    static deparentify(branches: MoveBranch[]) {
-        for (let branch of branches) {
-            branch.parent = undefined;
-            Repository.deparentify(branch.branches);
+    static persistable<T extends Branch>(branch: T): Persistable<T> {
+        let persistableBranches = branch.branches.map(Repository.persistable);
+        let persistable = {
+            ...branch,
+            branches: persistableBranches
         }
-    }
-
-    static parentify(parent: any, branches: MoveBranch[]) {
-        for (let branch of branches) {
-            branch.parent = parent;
-            Repository.parentify(branch, branch.branches);
-        }
+        delete persistable.parent
+        return persistable as unknown as Persistable<T>;
     }
 
     static getFen(branch: Branch) {
         let line: Line = [];
-        var current: Branch | null = branch;
-        while (current != null) {
+        var current: Branch | undefined = branch;
+        while (current !== undefined) {
             line.push(current);
-            current = current as MoveBranch ? current.parent : null;
+            current = current.parent
         }
         let game = Chess();
         for (var i = line.length - 1; i >= 0; i--) {
-            game.move(line[i].move);
+            game.move((line[i] as MoveBranch).move); // eek
         }
         return game.fen();
     }
 
-    static copyInto(source: Branch, target: Branch) { // 4x 0, 1x 3 4x 0 (2 baddies)
-        // assert source.move == target.move
+    static copyInto(source: Branch, target: Branch) {
         if (!target.branches)
             target.branches = []
 
-        var toAdd = []
+        var toAdd: MoveBranch[] = []
         for (let branch of source.branches) {
             let inTarget = target.branches.find(b => moveEquals(branch.move, b.move));
             if (inTarget) {

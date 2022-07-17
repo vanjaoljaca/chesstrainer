@@ -23,14 +23,14 @@ test('it is so good', () => {
 
     expect(localNames).toEqual({ black: ['test'], white: ['wtest'] });
     expect(locals).toEqual([
-        { name: 'wtest', source: 'local', orientation: 'white ' },
-        { name: 'test', source: 'local', orientation: 'black ' }]);
+        { name: 'wtest', source: 'local', orientation: 'white' },
+        { name: 'test', source: 'local', orientation: 'black' }]);
 });
 
 test('it ok', async () => {
-
+    // this actually comes from 'remote' file 
     let r = await sut.loadRemoteAsync();
-    expect(r).toEqual([{ name: 'caro-kann', source: 'remote' }]);
+    expect(r).toEqual([{ name: 'caro-kann', source: 'remote', orientation: 'black' }]);
 })
 
 test('it load remoteo', async () => {

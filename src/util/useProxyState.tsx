@@ -1,4 +1,4 @@
-import { DependencyList, useEffect, useState } from "react";
+import { DependencyList, Dispatch, useEffect, useState } from "react";
 
 // Does this hook even make sense??
 // ok it kinda makes sense as useProxyState(() => trainer.orientation, [trainer])
@@ -23,8 +23,8 @@ export function useProxyState<S>(source: () => S, deps?: DependencyList): [S, ()
 
 export function useRefreshingState(sources: (() => unknown)[], deps?: DependencyList): [...unknown[], () => void] {
     deps = deps || [];
-    var values = [];
-    var setValues = [];
+    var values: unknown[] = [];
+    var setValues: Dispatch<unknown>[] = [];
     for (let s of sources) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         let [value, setValue] = useState(s);
@@ -33,7 +33,7 @@ export function useRefreshingState(sources: (() => unknown)[], deps?: Dependency
     }
     let onRefreshStates = () => {
         for (let i = 0; i < sources.length; i++) {
-            setValues[i]((_: any) => sources[i]());//?
+            setValues[i]((_: any) => sources[i]());
         }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
