@@ -1,21 +1,5 @@
 import React from 'react';
-import { ReactNodeLike, Requireable } from 'prop-types';
-
-// @ts-nocheck
-// type PropsType = {
-//   collapsed: boolean
-//   className: string,
-//   itemClassName = '',
-//   treeViewClassName = '',
-//   childrenClassName = '',
-//   nodeLabel,
-//   children,
-//   defaultCollapsed,
-// }
-
-// type StateType = {
-//   collapsed: boolean = false
-// }
+import { ReactNodeLike } from 'prop-types';
 
 type TreeViewProps = {
   collapsed?: boolean,
@@ -29,7 +13,11 @@ type TreeViewProps = {
   onClick?: any
 }
 
-class TreeView extends React.PureComponent<TreeViewProps, any> {
+type TreeViewState = {
+  collapsed: boolean
+}
+
+class TreeView extends React.PureComponent<TreeViewProps, TreeViewState> {
 
   constructor(props) {
     super(props);

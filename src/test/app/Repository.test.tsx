@@ -21,3 +21,10 @@ test('lol', () => {
     let json = JSON.stringify(p);
     expect(json).toBeTruthy();
 });
+
+test('lol el dos', () => {
+    let p = sut.persistable();
+    let r = new Repository();
+    p //? 
+    r.unpersist(p);
+});

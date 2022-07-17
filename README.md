@@ -7,6 +7,8 @@ React app for drilling chess openings.
 ## TODO
 
 sprint: launch:
+
+- get fen branches in for pin practice etc
 - https://usehooks-ts.com/react-hook/use-fetch
 - persistence type & types clean up & ts strict
 - delayed throbbing brain
@@ -27,7 +29,6 @@ soon:
 - method to export from phone to whatever (share)
 
 backlog:
-
 - linq:
   - https://www.npmjs.com/package/linq-typescript
   - https://www.npmjs.com/package/linq-to-typescript
@@ -47,6 +48,8 @@ backlog:
 - "answer needed" tag
 
 recently done:
+- edit mode: selecting moves is broken
+- edit mode: get breadcrumsb working!
 - lodash
 - modules with orientation
 - fix non-start computer

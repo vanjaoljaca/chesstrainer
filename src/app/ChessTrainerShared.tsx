@@ -23,14 +23,8 @@ export type MoveBranch = {
 }
 
 export type Persistable<T extends Branch> = Omit<T, 'parent' | 'branches'> & {
-    branches: Persistable<T>[]
+    branches: Persistable<ChildBranch>[]
 }
-
-export type PersistedBranch = Omit<MoveBranch, 'parent' | 'branches'> & {
-    branches: PersistedBranch[]
-}
-
-export type PersistedRootBranch = Omit<PersistedBranch, 'move' | 'played' | 'correct' | 'parent'>
 
 export type FenBranch = {} /* todo */
 

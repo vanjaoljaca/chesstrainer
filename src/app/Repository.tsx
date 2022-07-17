@@ -104,11 +104,24 @@ export class Repository {
         this.generateFen();
     }
 
+    unpersist(persistable: Persistable<RootBranch>) {
+        this.root = Repository.unpersist(persistable);
+        this.generateFen();
+    }
+
+    private static unpersist<T extends Branch>(persistable: Persistable<T>): T {
+        let branch: T = { ...persistable } as any;
+        let branches = persistable.branches.map(b => Repository.unpersist(b));
+        branches.forEach(b => b.parent = branch);
+        branch.branches = branches;
+        return branch as T;
+    }
+
     persistable(): Persistable<RootBranch> {
         return Repository.persistable(this.root);
     }
 
-    static persistable<T extends Branch>(branch: T): Persistable<T> {
+    private static persistable<T extends Branch>(branch: T): Persistable<T> {
         let persistableBranches = branch.branches.map(Repository.persistable);
         let persistable = {
             ...branch,

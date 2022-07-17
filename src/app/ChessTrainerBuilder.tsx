@@ -1,7 +1,7 @@
 import './App.css';
 // https://github.com/jhlywa/chess.js/blob/master/README.md
 import { Chess, ChessInstance, Move, ShortMove } from "../util/chess.js";
-import { Branch, Orientation, moveEquals, MoveBranch, San, Line } from './ChessTrainerShared';
+import { Branch, Orientation, moveEquals, MoveBranch, San, Line, RootBranch } from './ChessTrainerShared';
 import { Repository } from './Repository';
 
 export class ChessTrainerBuilder {
@@ -85,8 +85,12 @@ export class ChessTrainerBuilder {
         line.reverse();
         this.reset();
         for (let b of line) {
-            if (b as MoveBranch)
-                this.game.move((b as MoveBranch).move);
+            if ((b as MoveBranch).move !== undefined) {
+                let r = this.game.move((b as MoveBranch).move);
+                if (!r) {
+                    throw Error('Failed to load branch');
+                }
+            }
         }
         this._currentBranch = branch;
     }

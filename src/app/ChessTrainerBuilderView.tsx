@@ -12,8 +12,8 @@ type TrainerBuilderViewProps = {
 }
 
 function Breadcrumbs({ currentBranch, onSelected }: { currentBranch: Branch, onSelected: (branch: Branch) => void }) {
-    let items: any[] = [];
-    for (var b: any = currentBranch; b !== null; b = b.parent) {
+    let items: MoveBranch[] = [];
+    for (var b: MoveBranch = currentBranch as MoveBranch; b !== undefined; b = b.parent as MoveBranch) {
         items.push(b);
     }
     return (
@@ -21,7 +21,7 @@ function Breadcrumbs({ currentBranch, onSelected }: { currentBranch: Branch, onS
             {items.map((b, i) =>
                 <div key={i}
                     style={{ margin: '2px', fontSize: '12px' }}>
-                    {b.move && (b.move.san ? b.move.san : (b.move.from + '-' + b.move.to))}
+                    {b.move && /*(b.move.san ? b.move.san : */ (b.move.from + '-' + b.move.to) /*)*/}
                 </div>
             )}
         </div>

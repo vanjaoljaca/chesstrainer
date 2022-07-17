@@ -8,7 +8,7 @@ import { ChessTrainerBuilder } from './ChessTrainerBuilder'
 import { ChessTrainerBuilderView } from './ChessTrainerBuilderView'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Repository } from "./Repository";
-import { Orientation } from "./ChessTrainerShared";
+import { Orientation, Persistable, RootBranch } from "./ChessTrainerShared";
 import { ModuleBrowser, Module } from "./ModuleBrowser";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { ModuleSelector } from "./ModuleSelector";
@@ -36,15 +36,15 @@ function App() {
     setModules(allModules);
   }
 
-  async function loadRemoteJson(module: Module) {
+  async function loadModuleAsync(module: Module) {
     let orientation: Orientation = 'white'
     let repository = new Repository();
 
     if (module.source === 'new') {
 
     } else {
-      let json = await moduleManager.loadAsync(module);
-      repository.merge(json);
+      let persisted = await moduleManager.loadAsync(module);
+      repository.unpersist(persisted);
       // would be nice if this wasn't needed, but you know, crap happens!
       repository.dedupe();
     }
@@ -63,7 +63,7 @@ function App() {
   }
 
   function onModuleSelected(module: Module) {
-    loadRemoteJson(module);
+    loadModuleAsync(module);
   }
 
   function onLoadModule() {
