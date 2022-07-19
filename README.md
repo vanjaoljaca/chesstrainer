@@ -6,10 +6,12 @@ React app for drilling chess openings.
 
 ## TODO
 
-sprint: launch:
+sprint to launch:
 
-- change MoveBranch to use a SAN move
-  - this means editor needs to get move from game
+- hint after after 3 seconds
+  - as configurable option duration
+- broke carokann
+- make too many mistakes an option
 - get fen branches in for pin practice etc
 - delayed throbbing brain
 - create 2 repetoirs

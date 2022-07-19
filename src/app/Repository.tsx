@@ -1,9 +1,9 @@
-import { Chess, ShortMove, Square } from "../util/chess.js";
-import { Branch, Fen, Line, MoveBranch, moveEquals, Persistable, RootBranch } from "./ChessTrainerShared";
+import { Chess, Square, Move, ChessInstance } from "../util/chess.js";
+import { Branch, Fen, Line, MoveBranch, Persistable, RootBranch } from "./ChessTrainerShared";
 import _ from "lodash";
 
-export function branch(parent: Branch, move: ShortMove, ...branches: MoveBranch[]): MoveBranch {
-    return { move, branches: branches || [], played: 0, correct: 0, parent }
+export function branch(parent: Branch, move: Move, ...branches: MoveBranch[]): MoveBranch {
+    return { move, san: move.san, branches: branches || [], played: 0, correct: 0, parent }
 }
 
 export class Repository {
@@ -25,16 +25,20 @@ export class Repository {
         this.generateFenPartial(branches);
     }
 
-    createBranches(parent: Branch | null, branches: [Square, Square][]) {
-        var currentBranch = parent;
-        for (let i = 0; i < branches.length; i++) {
-            let branch = branches[i];
-            currentBranch = this.createBranch(currentBranch, { from: branch[0], to: branch[1] });
+    createBranchesDebug(moves: [Square, Square][]) {
+        let chess = Chess();
+        var currentBranch: Branch | null = null;
+        for (let i = 0; i < moves.length; i++) {
+            let move = moves[i];
+            let m = chess.move({ from: move[0], to: move[1] });
+            if (m === null)
+                throw Error('invalid move: ' + JSON.stringify(branch));
+            currentBranch = this.createBranch(currentBranch, m);
         }
         return currentBranch;
     }
 
-    createBranch(parent: Branch | null, move: ShortMove): MoveBranch {
+    createBranch(parent: Branch | null, move: Move): MoveBranch {
         if (parent === null) parent = this.root;
         // todo check for dupe
         let newBranch = branch(parent, move);
@@ -85,7 +89,7 @@ export class Repository {
         let dedupe = (branch: Branch) => {
             let deduped: MoveBranch[] = [];
             for (let child of branch.branches) {
-                let inDeduped = deduped.find(b => moveEquals(child.move, b.move));
+                let inDeduped = deduped.find(b => child.san === b.san);
                 if (inDeduped) {
                     Repository.copyInto(child, inDeduped);
                 } else {
@@ -105,15 +109,39 @@ export class Repository {
     }
 
     unpersist(persistable: Persistable<RootBranch>) {
-        this.root = Repository.unpersist(persistable);
+        this.root = Repository.unpersist(Chess(), persistable);
         this.generateFen();
     }
 
-    private static unpersist<T extends Branch>(persistable: Persistable<T>): T {
+    private static unpersist<T extends RootBranch>(game: ChessInstance, persistable: Persistable<T>): T {
+        if (game === null)
+            game = Chess();
         let branch: T = { ...persistable } as any;
-        let branches = persistable.branches.map(b => Repository.unpersist(b));
+        let branches = persistable.branches.map(b => Repository.unpersist3(game, b));
         branches.forEach(b => b.parent = branch);
         branch.branches = branches;
+        return branch as T;
+    }
+
+    private static unpersist3<T extends MoveBranch>(game: ChessInstance, persistable: Persistable<T>): T {
+        let branch: T = { ...persistable } as any;
+        let m;
+        if (persistable.san !== undefined) {
+            console.log('move', persistable.san)
+            m = game.move(persistable.san);
+            if (m === null) {
+                console.log(game, persistable, m, game.moves());
+                throw Error('invalid move: ' + persistable.san);
+            }
+        }
+        let branches = persistable.branches.map(b => Repository.unpersist3(game, b));
+        branches.forEach(b => b.parent = branch);
+        branch.branches = branches;
+        if (persistable.san !== undefined) {
+            console.log('undo')
+            game.undo();
+            branch.move = m;
+        }
         return branch as T;
     }
 
@@ -140,7 +168,7 @@ export class Repository {
         }
         let game = Chess();
         for (var i = line.length - 1; i >= 0; i--) {
-            game.move((line[i] as MoveBranch).move); // eek
+            game.move((line[i] as MoveBranch).san); // eek
         }
         return game.fen();
     }
@@ -151,7 +179,7 @@ export class Repository {
 
         var toAdd: MoveBranch[] = []
         for (let branch of source.branches) {
-            let inTarget = target.branches.find(b => moveEquals(branch.move, b.move));
+            let inTarget = target.branches.find(b => branch.san === b.san);
             if (inTarget) {
                 Repository.copyInto(branch, inTarget);
             } else {

@@ -1,7 +1,7 @@
 import './App.css';
 // https://github.com/jhlywa/chess.js/blob/master/README.md
-import { Chess, ChessInstance, ShortMove, Square } from "../util/chess.js";
-import { Branch, Line, Orientation, RootBranch, Fen, moveEquals, MoveBranch } from './ChessTrainerShared';
+import { Chess, ChessInstance, Move, ShortMove, Square } from "../util/chess.js";
+import { Branch, Line, Orientation, RootBranch, MoveBranch } from './ChessTrainerShared';
 import { Repository } from './Repository';
 import { San } from './ChessTrainerShared';
 
@@ -29,22 +29,22 @@ export class ChessTrainer {
         if (!this.isHumanMove())
             throw Error('Not human move.')
 
-        let move = this.game.move(m)
+        let move = this.game.move(m) as Move
 
-        if (move as ShortMove === null)
+        if (move === null)
             throw Error('Not a valid move')
 
         this.game.undo();
 
         let branches = this._currentBranch.branches;
-        let candidate = branches.find(b => moveEquals(b.move, move as ShortMove));
+        let candidate = branches.find(b => b.san === move.san);
         if (candidate == null) {
             this.showHint()
             return null;
         }
         this.clearHint();
         let nextBranch = candidate;
-        let nextMove = nextBranch.move;
+        let nextMove = nextBranch.san;
 
         this._currentBranch = nextBranch;
         this.line.push(nextBranch)
@@ -80,7 +80,7 @@ export class ChessTrainer {
         }
         let candidate = branches[Math.floor(Math.random() * branches.length)]
         let nextBranch = candidate;
-        let nextMove = nextBranch.move;
+        let nextMove = nextBranch.san;
         this.game.move(nextMove);
         this._currentBranch = nextBranch;
         this.currentLine.push(nextBranch)
@@ -155,7 +155,7 @@ export class ChessTrainer {
         line.reverse();
         this.reset();
         for (let b of line) {
-            this.game.move(b.move);
+            this.game.move(b.san);
         }
         this._currentBranch = branch;
     }

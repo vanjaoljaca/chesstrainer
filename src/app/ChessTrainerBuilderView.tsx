@@ -21,7 +21,7 @@ function Breadcrumbs({ currentBranch, onSelected }: { currentBranch: Branch, onS
             {items.map((b, i) =>
                 <div key={i}
                     style={{ margin: '2px', fontSize: '12px' }}>
-                    {b.move && /*(b.move.san ? b.move.san : */ (b.move.from + '-' + b.move.to) /*)*/}
+                    {b.san && /*(b.move.san ? b.move.san : */ (b.san) /*)*/}
                 </div>
             )}
         </div>
@@ -46,7 +46,7 @@ export function ChessTrainerBuilderView({ trainer }: TrainerBuilderViewProps) {
 
     }
 
-    function onDrop(from, to) {
+    function onDrop(from: Square, to: Square) {
         let result = trainer.tryMove({ from, to });
         if (!result) {
             return false;
@@ -180,7 +180,7 @@ function BranchEditView({ branch, onSave }: { branch: Branch, onSave: () => void
         branch.comment = comment;
     }
 
-    let move = 'move' in branch ? branch.move.from + ' -> ' + branch.move.to : 'root';
+    let move = (branch as MoveBranch) !== null ? (branch as MoveBranch).san : 'root';
     return (
         <div>
             <p>{move}</p>

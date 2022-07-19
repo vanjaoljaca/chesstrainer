@@ -4,7 +4,7 @@ import { Repository } from '../../app/Repository';
 
 test('tessssst', () => {
   let repository = new Repository()
-  repository.createBranches(null, [['e2', 'e4'], ['e7', 'e5']]);
+  repository.createBranchesDebug([['e2', 'e4'], ['e7', 'e5']]);
   let trainer = new ChessTrainer(repository, 'white');
   let m = trainer.tryMove({ from: 'e2', to: 'e4' });
   let cm = trainer.doComputerMove();

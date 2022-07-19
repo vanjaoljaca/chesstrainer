@@ -3,8 +3,8 @@ import { Repository } from '../../app/Repository';
 let sut: Repository;
 beforeEach(() => {
     sut = new Repository()
-    sut.createBranches(null, [['e2', 'e4'], ['e7', 'e5']]);
-    sut.createBranches(null, [['e2', 'e4'], ['e7', 'e5']])
+    sut.createBranchesDebug([['e2', 'e4'], ['e7', 'e5']]);
+    sut.createBranchesDebug([['e2', 'e4'], ['d7', 'd5']])
 })
 
 test('fen', () => {

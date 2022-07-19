@@ -4,16 +4,13 @@ export function move(from: Square, to: Square): ShortMove {
     return { from, to }
 }
 
-export function moveEquals(a: ShortMove, b: ShortMove): boolean {
-    return a.from === b.from && a.to === b.to;
-}
-
 export type Branch = ChildBranch | RootBranch
 
 export type ChildBranch = MoveBranch
 
 export type MoveBranch = {
     name?: string,
+    san: San,
     move: ShortMove,
     branches: MoveBranch[] // todo: ChildBranch
     played: number
@@ -22,13 +19,13 @@ export type MoveBranch = {
     comment?: string
 }
 
-export type Persistable<T extends Branch> = Omit<T, 'parent' | 'branches'> & {
+export type Persistable<T extends Branch> = Omit<T, 'parent' | 'branches' | 'move'> & {
     branches: Persistable<ChildBranch>[]
 }
 
 export type FenBranch = {} /* todo */
 
-export type RootBranch = Omit<MoveBranch, 'move' | 'played' | 'correct' | 'parent'> & {
+export type RootBranch = Omit<MoveBranch, 'move' | 'played' | 'correct' | 'parent' | 'san'> & {
     parent: undefined
 }
 
