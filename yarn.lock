@@ -1071,6 +1071,11 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@chess-fu/pgn-parser@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@chess-fu/pgn-parser/-/pgn-parser-1.1.3.tgz#06313296b91e698687186c05db227b1636ff81dd"
+  integrity sha512-wSQTyr/PnCQvB2RALlm+2+RHiUOkevi2EA+blErEOxXUwCrPdVWVJ8Y5yodGqqJhnbv9DGhbOkdVT08n8Edw1A==
+
 "@csstools/normalize.css@*":
   version "12.0.0"
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-12.0.0.tgz#a9583a75c3f150667771f30b60d9f059473e62c4"
@@ -1468,6 +1473,11 @@
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz#b2ac626d6cb9c8718ab459166d4bb405b8ffa78b"
   integrity sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==
+
+"@mliebelt/pgn-parser@^1.4.4":
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/@mliebelt/pgn-parser/-/pgn-parser-1.4.4.tgz#0e839e49ace4e0cdc352a67adef4c55684b4c971"
+  integrity sha512-8P2FeXlq5YWV3QwRHPoGGx8YVT1HEtZ4MtH67UCYa8I9MkVzj+u2Suhf8Qv1l4oZ7W6+XOGvwXZqV1dqkLLjPA==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -6540,6 +6550,11 @@ performance-now@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
+
+pgn-parser@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/pgn-parser/-/pgn-parser-2.2.0.tgz#c3e97536190050e44032cb9ef6d60756875912f5"
+  integrity sha512-cioZtVp+0mzzCwVSxN3RlH0Rr3ds5OyImypr1vAUWs0iUWBnXgUFd8tdup3hGE9ecytiTXzBz1jWabOAkjBG3w==
 
 picocolors@^0.2.1:
   version "0.2.1"

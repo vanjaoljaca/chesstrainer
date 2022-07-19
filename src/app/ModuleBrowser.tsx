@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { PgnLoad } from '../util/PgnLoad';
 import { Orientation } from './ChessTrainerShared';
 
 export type Module = {
@@ -25,6 +26,16 @@ async function getDataAsync(moduleName: string) {
     },
   })
   return r.json();
+}
+
+async function getPgnDataAsync(pgnName: string) {
+  let r = await fetch('/' + pgnName, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+  return r.text();
 }
 
 
@@ -96,6 +107,13 @@ export class ModuleBrowser {
   }
 
   async loadRemoteRepositoryAsync(name: string) {
+    if (name.endsWith('.pgn')) {
+      let x = await getPgnDataAsync(name);
+      console.log(x);
+      let z = PgnLoad.fromPgn(x);
+      // todo: theres many games to choose fromhere...
+      return z[0];
+    }
     return getDataAsync(name);
   }
 }

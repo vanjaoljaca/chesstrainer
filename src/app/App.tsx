@@ -32,7 +32,8 @@ function App() {
       remoteModules = [];
     }
     let localModules = moduleManager.loadLocal();
-    let allModules = remoteModules.concat(localModules);
+    let allModules = remoteModules.concat(localModules)
+      .concat([{ name: 'e4NYStyle.pgn', source: 'remote', orientation: 'white' }]);
     setModules(allModules);
   }
 

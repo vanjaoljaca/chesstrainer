@@ -8,27 +8,33 @@ React app for drilling chess openings.
 
 sprint: launch:
 
+- change MoveBranch to use a SAN move
+  - this means editor needs to get move from game
 - get fen branches in for pin practice etc
-- https://usehooks-ts.com/react-hook/use-fetch
-- persistence type & types clean up & ts strict
 - delayed throbbing brain
 - create 2 repetoirs
-- nicer landing page
+- nicer landing page (view on iphone)
+- caro kann is loading as white??
 - 'play' module on first open to demonstrate
+- play layout and icons, just make it pretty
+- pgn load from bulk load
 
 soon:
 
+- https://usehooks-ts.com/react-hook/use-fetch
+- builder: current line, target branch
 - fix edit name/descriptiion
 - load pgp
 - breadcrumbs & navigation
 - popups for edit screen
 - teach mode vs training mode??
 - serializing / deserlialization method for moves to remove fluff (part 2)
-- when playing black have to press compute to get white to start
+- fen branch
 - when switching sides also...
 - method to export from phone to whatever (share)
 
 backlog:
+
 - linq:
   - https://www.npmjs.com/package/linq-typescript
   - https://www.npmjs.com/package/linq-to-typescript
@@ -48,6 +54,9 @@ backlog:
 - "answer needed" tag
 
 recently done:
+
+- persistence type & types clean up & ts strict
+- when playing black have to press compute to get white to start
 - serializing / deserlialization method for moves to remove fluff (part 1)
 - edit mode: selecting moves is broken
 - edit mode: get breadcrumsb working!
