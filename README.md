@@ -7,9 +7,13 @@ React app for drilling chess openings.
 ## TODO
 
 sprint to launch:
+- autoshow arrows first play through?
+- !!!! hint after after 3 seconds
+- clean up
 
-- hint after after 3 seconds
-  - as configurable option duration
+- transpositions by fen
+- submodule select & merge
+- hint after after 3 seconds as configurable option duration
 - broke carokann
 - make too many mistakes an option
 - get fen branches in for pin practice etc
@@ -56,7 +60,8 @@ backlog:
 - "answer needed" tag
 
 recently done:
-
+- deploy latest version
+- mechanism for keeping pgn files hidden
 - persistence type & types clean up & ts strict
 - when playing black have to press compute to get white to start
 - serializing / deserlialization method for moves to remove fluff (part 1)

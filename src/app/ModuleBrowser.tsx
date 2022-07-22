@@ -1,11 +1,17 @@
 import _ from 'lodash';
 import { PgnLoad } from '../util/PgnLoad';
-import { Orientation } from './ChessTrainerShared';
+import { Orientation, Persistable, RootBranch } from './ChessTrainerShared';
 
 export type Module = {
   name: string,
   source: 'remote' | 'local' | 'new'
   orientation: Orientation
+}
+
+export type Submodule = {
+  name: string,
+  // index: number
+  data: any
 }
 
 async function getMoveRepositoryAsync() {
@@ -29,7 +35,7 @@ async function getDataAsync(moduleName: string) {
 }
 
 async function getPgnDataAsync(pgnName: string) {
-  let r = await fetch('/' + pgnName, {
+  let r = await fetch('/' + pgnName + '.txt', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -106,13 +112,18 @@ export class ModuleBrowser {
     }
   }
 
-  async loadRemoteRepositoryAsync(name: string) {
+  async loadRemoteRepositoryAsync(name: string): Promise<Submodule[]> {
     if (name.endsWith('.pgn')) {
       let x = await getPgnDataAsync(name);
-      let z = PgnLoad.fromPgn(x);
-      // todo: theres many games to choose fromhere...
-      return z[0];
+      return PgnLoad.fromPgn(x).map(ModuleBrowser.toSubmodule);
     }
-    return getDataAsync(name);
+    return [ModuleBrowser.toSubmodule(await getDataAsync(name))];
+  }
+
+  static toSubmodule(root: Persistable<RootBranch>): Submodule {
+    return {
+      name: root.name || 'unnamed',
+      data: root
+    }
   }
 }

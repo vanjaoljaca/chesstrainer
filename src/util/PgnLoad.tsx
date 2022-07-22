@@ -11,8 +11,7 @@ export class PgnLoad {
             .replace(/O - O/g, 'O-O');
         let pgn = PgnParser2.parseGames(clean, { startRule: 'games' });
         let roots = pgn.map(PgnLoad.toRoot)
-        roots[0].branches = roots.flatMap(r => r.branches);
-        return [roots[0]];
+        return roots;
     }
 
     private static toRoot(pgn: PgnParser2.ParseTree): Persistable<RootBranch> {

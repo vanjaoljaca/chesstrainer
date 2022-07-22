@@ -9,9 +9,9 @@ import { ChessTrainerBuilderView } from './ChessTrainerBuilderView'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Repository } from "./Repository";
 import { Orientation, Persistable, RootBranch } from "./ChessTrainerShared";
-import { ModuleBrowser, Module } from "./ModuleBrowser";
+import { ModuleBrowser, Module, Submodule } from "./ModuleBrowser";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { ModuleSelector } from "./ModuleSelector";
+import { ModuleSelector, SubmoduleSelector } from "./ModuleSelector";
 
 function App() {
   let [playing, setPlaying] = useState(true);
@@ -22,6 +22,8 @@ function App() {
   let [moduleManager, _] = useState<ModuleBrowser>(() => new ModuleBrowser())
   let [modules, setModules] = useState<Module[]>([]);
   let [module, setModule] = useState<Module | null>(null)
+  let [submodules, setSubmodules] = useState<Submodule[]>([]);
+  let [submodule, setSubmodule] = useState<Submodule | null>(null)
 
   async function initializeJson() {
     let remoteModules: Module[];
@@ -33,26 +35,23 @@ function App() {
     }
     let localModules = moduleManager.loadLocal();
     let allModules = remoteModules.concat(localModules)
-      .concat([{ name: 'e4NYStyle.pgn', source: 'remote', orientation: 'white' }]);
+      .concat([{ name: 'e4NYStyle.pgn', source: 'remote', orientation: 'white' }])
+      .concat([{ name: 'CaroKann.pgn', source: 'remote', orientation: 'black' }])
+      .concat([{ name: 'e6b6NYStyle.pgn', source: 'remote', orientation: 'black' }]);
     setModules(allModules);
   }
 
   async function loadModuleAsync(module: Module) {
-    let orientation: Orientation = 'white'
-    let repository = new Repository();
-
+    setModule(module);
     if (module.source === 'new') {
 
     } else {
-      let persisted = await moduleManager.loadAsync(module);
-      repository.unpersist(persisted);
-      // would be nice if this wasn't needed, but you know, crap happens!
-      repository.dedupe();
+      submodules = await moduleManager.loadAsync(module);
+      setSubmodules(submodules);
+      if (submodules.length === 1) {
+        onSubmoduleSelected(submodules[0]);
+      }
     }
-    setModule(module);
-    setRepository(repository);
-    setTrainerBuilder(new ChessTrainerBuilder(repository, orientation))
-    setTrainer(new ChessTrainer(repository, orientation))
   }
 
   function onSaveModule() {
@@ -67,8 +66,23 @@ function App() {
     loadModuleAsync(module);
   }
 
+  function onSubmoduleSelected(submodule: Submodule) {
+    let orientation: Orientation = 'white'
+    let repository = new Repository();
+
+    setSubmodule(submodule);
+    let persisted = submodule.data;
+    repository.unpersist(persisted);
+    // would be nice if this wasn't needed, but you know, crap happens!
+    repository.dedupe();
+    setRepository(repository);
+    setTrainerBuilder(new ChessTrainerBuilder(repository, orientation))
+    setTrainer(new ChessTrainer(repository, orientation))
+  }
+
   function onLoadModule() {
     initializeJson();
+    setSubmodule(null);
     setModule(null);
     setRepository(null)
   }
@@ -145,7 +159,7 @@ function App() {
 
   function ViewContent() {
 
-    if (module == null) {
+    if (module === null) {
       return (
         <div className="App-content">
           <div>
@@ -153,6 +167,15 @@ function App() {
             <ModuleSelector modules={modules} onSelected={onModuleSelected} />
           </div>
         </div>)
+    }
+
+    if (submodule === null) {
+      return (<div className="App-content">
+        <div>
+          <h3>♟ Chess Trainer</h3>
+          <SubmoduleSelector submodules={submodules} onSelected={onSubmoduleSelected} />
+        </div>
+      </div>)
     }
 
     if (!trainerBuilder || !trainer) throw new Error('trainerBuilder or trainer missing')
