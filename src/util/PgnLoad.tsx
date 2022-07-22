@@ -1,70 +1,120 @@
-import { MoveBranch, Persistable, RootBranch } from "../app/ChessTrainerShared";
+import { Branch, MoveBranch, Persistable, RootBranch } from "../app/ChessTrainerShared";
 import * as PgnParser2 from '@mliebelt/pgn-parser'
-import * as PgnParser3 from 'pgn-parser';
-import { PgnParser } from '@chess-fu/pgn-parser';
-
+// import * as PgnParser3 from 'pgn-parser';
+// import { PgnParser } from '@chess-fu/pgn-parser';
+// import { parse } from './PgnParser'
 
 export class PgnLoad {
     public static fromPgn(raw: string): Persistable<RootBranch>[] {
         let clean = raw.replace(/[ ]+\+/g, '+')
             .replace(/O - O - O/g, 'O-O-O')
-            // .replace(/O - O - O/g, 'O-O-O')
-            .replace(/O - O/g, 'O-O')
-            // .replace(/O - O/g, 'O-O')
-            .replace(/ \+/g, 'Qh4+');
-        let parser = new PgnParser();
-        let r = parser.parse(clean) //?
-        r//?
-        return null;
+            .replace(/O - O/g, 'O-O');
         let pgn = PgnParser2.parseGames(clean, { startRule: 'games' });
-        let root = pgn.slice(0, 1).map(PgnLoad.toRoot) //?
+        let roots = pgn.map(PgnLoad.toRoot)
+        roots[0].branches = roots.flatMap(r => r.branches);
+        return [roots[0]];
+    }
+
+    private static toRoot(pgn: PgnParser2.ParseTree): Persistable<RootBranch> {
+        let name = pgn.tags ? pgn.tags['White'] + ' ' + pgn.tags['Black']
+            : 'Unnamed';
+
+        let mainline = PgnLoad.toMoveBranches(pgn.moves);
+
+        // variation
+        let variations: Persistable<MoveBranch>[][] = [];
+        for (var i = 0; i < pgn.moves.length; i++) {
+            let m = pgn.moves[i];
+            let alts = m.variations.flatMap(PgnLoad.fromLine);
+            variations.push(alts);
+            // if (m.turn === 'b') { // todo: why is this always black??
+            if (variations.length > 1) {
+                // ok this might be white.. put them in both this black move and the previous white move
+                // just in case this was a (1... c5) kind of move
+                // disable this for now while debugging..
+                variations[variations.length - 2] = variations[variations.length - 2].concat(alts);
+            }
+        }
+
+        let root = {
+            name: name,
+            branches: mainline
+        } as Persistable<RootBranch>;
+
+        // walk the mainline and merge in the variations
+        var current: Persistable<Branch> = root;
+        for (var j = 0; j < variations.length; j++) {
+            current.branches = current.branches.concat(variations[j]);
+            current = current.branches[0];
+        }
+
         return root;
     }
 
-    private static toRoot(pgn: PgnParser.ParseTree): Persistable<RootBranch> {
-        let branches = PgnLoad.toMoveBranches(pgn.moves);
-        let name;
-        if (pgn.tags) {
-            name = pgn.tags['White'] + ' ' + pgn.tags['Black']
-        } else {
-            name = 'Unnamed';
+    private static fromLine(moves: PgnParser2.PgnMove[]): Persistable<MoveBranch>[] {
+        let mainline = PgnLoad.toMoveBranches(moves);
+
+        // variation
+        let variationLinesPerMove: Persistable<MoveBranch>[][] = [];
+        for (var i = 0; i < moves.length; i++) {
+            let m = moves[i];
+            let alts = m.variations.flatMap(PgnLoad.fromLine);
+            variationLinesPerMove.push(alts);
+            // if (m.turn === 'b') { // todo: why is this always black??
+            if (variationLinesPerMove.length > 1) {
+                // ok this might be white.. put them in both this black move and the previous white move
+                // just in case this was a (1... c5) kind of move
+                // disable this for now while debugging..
+                variationLinesPerMove[variationLinesPerMove.length - 2] = variationLinesPerMove[variationLinesPerMove.length - 2].concat(alts);
+            }
         }
-        return {
-            name: name,
-            branches
-        } as RootBranch;
+
+        var current: Persistable<Branch> = mainline[0];
+        for (var j = 1; j < variationLinesPerMove.length; j++) {
+            current.branches = current.branches.concat(variationLinesPerMove[j]);
+            current = current.branches[0];
+        }
+
+        return [mainline[0]].concat(variationLinesPerMove[0]);
     }
 
-    private static toMoveBranches(moves: PgnParser.PgnMove[]): Persistable<MoveBranch>[] {
-        var branches: Persistable<MoveBranch>[] = []
+    // stupidly confusing, this array is temporal
+    // it has multiple sequential moves
+    // unlike the variations which have moves at one point in time
+    private static toMoveBranches(moves: PgnParser2.PgnMove[]): Persistable<MoveBranch>[] {
+        var firstBranch: Persistable<MoveBranch> | null = null
         var currentBranch: Persistable<MoveBranch> | null = null
         for (let move of moves) {
-            let newBranch = PgnLoad.toMoveBranch(move);
-            if (currentBranch === null) {
-                branches.push(newBranch);
-            } else {
-                currentBranch.branches.push(newBranch);
+            let branch = PgnLoad.toMoveBranchNoVariations(move);
+            if (currentBranch !== null) {
+                currentBranch.branches = [branch];
             }
-            currentBranch = newBranch
+            currentBranch = branch
+            firstBranch = firstBranch || branch
         }
-        return branches;
+        if (firstBranch === null) {
+            throw Error('no moves found');
+        }
+        return [firstBranch];
     }
 
-    private static toMoveBranch(move: PgnParser.PgnMove): Persistable<MoveBranch> {
-        // todo: variations here is wrong...
-        if (move.variations && move.variations.length > 0) {
-            // todo: the variations data here is garbage
-            // move //?
-            // move.variations //?
-        }
-
-        let branches = [] //move.variations.flatMap(PgnLoad.toMoveBranches);
+    private static toMoveBranchNoVariations(move: PgnParser2.PgnMove): Persistable<MoveBranch> {
         return {
             played: 0,
             correct: 0,
             comment: move.commentAfter,
-            san: move.notation.notation, // todo
-            branches
+            san: move.notation.notation,
+            branches: []
+        } as Persistable<MoveBranch>;
+    }
+
+    private static toMoveBranch(move: PgnParser2.PgnMove): Persistable<MoveBranch> {
+        return {
+            played: 0,
+            correct: 0,
+            comment: move.commentAfter,
+            san: move.notation.notation,
+            branches: move.variations.map(m => m[0]).map(PgnLoad.toMoveBranch)
         } as Persistable<MoveBranch>;
     }
 }

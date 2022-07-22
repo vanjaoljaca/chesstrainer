@@ -117,28 +117,31 @@ export class Repository {
         if (game === null)
             game = Chess();
         let branch: T = { ...persistable } as any;
-        let branches = persistable.branches.map(b => Repository.unpersist3(game, b));
+        let branches = persistable.branches.map(b => Repository.unpersist3(game, b))
+            .filter(b => b !== null) as MoveBranch[];
         branches.forEach(b => b.parent = branch);
         branch.branches = branches;
         return branch as T;
     }
 
-    private static unpersist3<T extends MoveBranch>(game: ChessInstance, persistable: Persistable<T>): T {
+    private static unpersist3<T extends MoveBranch>(game: ChessInstance, persistable: Persistable<T>): T | null {
         let branch: T = { ...persistable } as any;
         let m;
         if (persistable.san !== undefined) {
             console.log('move', persistable.san)
             m = game.move(persistable.san);
             if (m === null) {
-                console.log(game, persistable, m, game.moves());
-                throw Error('invalid move: ' + persistable.san);
+                // todo temp
+                // ignore this move because we're guaranteed to have bad moves
+                // throw Error('invalid move: ' + persistable.san);
+                return null;
             }
         }
-        let branches = persistable.branches.map(b => Repository.unpersist3(game, b));
+        let branches = persistable.branches.map(b => Repository.unpersist3(game, b))
+            .filter(b => b !== null) as T[];
         branches.forEach(b => b.parent = branch);
         branch.branches = branches;
         if (persistable.san !== undefined) {
-            console.log('undo')
             game.undo();
             branch.move = m;
         }
